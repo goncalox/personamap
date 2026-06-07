@@ -82,6 +82,7 @@ export async function createProfileAction(_prevState: ActionState, formData: For
       ...parsed.data,
       created_by: user.id,
       source_title: parsed.data.source_title || null,
+      description: parsed.data.description || null,
       image_url: parsed.data.image_url || null,
     })
     .select("slug")

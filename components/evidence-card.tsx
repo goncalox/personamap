@@ -29,7 +29,10 @@ export function EvidenceCard({ evidence }: { evidence: EvidenceCardType }) {
       </div>
       <h3 className="mt-4 text-lg font-semibold text-ink">{evidence.title}</h3>
       <p className="mt-2 text-sm leading-6 text-ink/70">{evidence.body}</p>
-      <p className="mt-4 text-xs text-ink/40">{formatDate(evidence.created_at)}</p>
+      <div className="mt-4 flex items-center justify-between gap-3 text-xs text-ink/40">
+        <p>{formatDate(evidence.created_at)}</p>
+        <p>{evidence.type_options?.label ?? "Type still being clarified"}</p>
+      </div>
     </article>
   );
 }

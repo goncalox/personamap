@@ -1,4 +1,4 @@
-export type Category = "fictional" | "public_figure";
+export type Category = string;
 export type TypingSystemCode = "MBTI" | "ENNEAGRAM";
 export type EvidenceStance = "for" | "against";
 
@@ -8,7 +8,7 @@ export type Profile = {
   name: string;
   category: Category;
   source_title: string | null;
-  description: string;
+  description: string | null;
   image_url: string | null;
   created_by?: string | null;
   created_at: string;

@@ -73,11 +73,12 @@ export function ProfileForm() {
         <textarea
           name="description"
           rows={6}
-          required
-          placeholder="A short summary of why people are debating this profile."
+          placeholder="Optional. Add a short summary if helpful."
           className="rounded-md border border-white/10 bg-coal px-3 py-3 text-ink outline-none focus:border-brass"
         />
-        <p className="text-xs leading-5 text-ink/45">At least 20 characters. Add enough context for a newcomer to understand the debate.</p>
+        <p className="text-xs leading-5 text-ink/45">
+          Optional. Leave blank if the profile is just getting started and let the community add context later.
+        </p>
       </label>
       {state.message ? (
         <p role="status" className={state.ok ? "text-sm text-emerald-300" : "text-sm text-wine"}>

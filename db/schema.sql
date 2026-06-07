@@ -6,7 +6,7 @@ create table if not exists profiles (
   name text not null,
   category text not null check (category in ('fictional', 'public_figure')),
   source_title text,
-  description text not null,
+  description text,
   image_url text,
   created_by uuid references auth.users(id) on delete set null,
   created_at timestamptz not null default now(),

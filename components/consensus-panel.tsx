@@ -1,7 +1,8 @@
 import type { ProfileConsensus } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-const statusTone: Record<ProfileConsensus["status"], string> = {
+const statusTone: Record<ProfileConsensus["status"] | "Needs votes", string> = {
+  "Needs votes": "border-white/15 bg-white/[0.06] text-ink/75",
   Speculative: "border-ocean/50 bg-ocean/15 text-ocean",
   Consensus: "border-emerald-400/50 bg-emerald-400/15 text-emerald-200",
   Contested: "border-brass/50 bg-brass/15 text-brass",
@@ -16,11 +17,16 @@ export function ConsensusPanel({ consensus }: { consensus: ProfileConsensus[] })
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-xs uppercase tracking-[0.18em] text-ink/45">{item.systemCode}</p>
-              <h3 className="mt-2 text-3xl font-semibold text-ink">{item.consensusCode ?? "Unclear"}</h3>
+              <h3 className="mt-2 text-3xl font-semibold text-ink">{item.consensusCode ?? "Untyped"}</h3>
               <p className="text-sm text-ink/55">{item.totalVotes} votes</p>
             </div>
-            <span className={cn("rounded-md border px-2.5 py-1 text-xs font-semibold", statusTone[item.status])}>
-              {item.status}
+            <span
+              className={cn(
+                "rounded-md border px-2.5 py-1 text-xs font-semibold",
+                statusTone[item.totalVotes === 0 ? "Needs votes" : item.status],
+              )}
+            >
+              {item.totalVotes === 0 ? "Needs votes" : item.status}
             </span>
           </div>
           <div className="mt-5 h-2 overflow-hidden rounded-full bg-black/30">
@@ -38,7 +44,12 @@ export function ConsensusPanel({ consensus }: { consensus: ProfileConsensus[] })
                 </div>
               ))}
             </div>
-          ) : null}
+          ) : (
+            <p className="mt-4 text-sm leading-6 text-ink/55">
+              No votes yet for this system. The first few votes will mark this profile as speculative until a real pattern
+              appears.
+            </p>
+          )}
         </article>
       ))}
     </section>

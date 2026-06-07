@@ -1,11 +1,14 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
+import { getConsensusDisplay } from "@/lib/profile-display";
 import type { ProfileWithConsensus } from "@/lib/types";
-import { formatCategory } from "@/lib/utils";
+import { formatCategory, getInitials } from "@/lib/utils";
 
 export function ProfileCard({ profile }: { profile: ProfileWithConsensus }) {
   const mbti = profile.consensus.find((item) => item.systemCode === "MBTI");
   const enneagram = profile.consensus.find((item) => item.systemCode === "ENNEAGRAM");
+  const mbtiDisplay = getConsensusDisplay(mbti);
+  const enneagramDisplay = getConsensusDisplay(enneagram);
 
   return (
     <Link
@@ -20,7 +23,13 @@ export function ProfileCard({ profile }: { profile: ProfileWithConsensus }) {
             alt=""
             className="h-full w-full object-cover opacity-85 transition duration-500 group-hover:scale-105 group-hover:opacity-100"
           />
-        ) : null}
+        ) : (
+          <div className="flex h-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(212,175,55,0.28),_transparent_48%),linear-gradient(135deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))]">
+            <div className="flex size-20 items-center justify-center rounded-full border border-white/10 bg-black/25 text-2xl font-semibold text-ink/80">
+              {getInitials(profile.name)}
+            </div>
+          </div>
+        )}
       </div>
       <div className="space-y-4 p-4">
         <div className="flex items-start justify-between gap-3">
@@ -33,27 +42,27 @@ export function ProfileCard({ profile }: { profile: ProfileWithConsensus }) {
         </div>
         <div className="flex items-center justify-between gap-3">
           <span className="rounded-full border border-white/10 bg-black/20 px-2.5 py-1 text-xs font-semibold text-ink/75">
-            {mbti?.status ?? "Consensus pending"}
+            {mbtiDisplay.status}
           </span>
           <span className="text-xs text-ink/45">Tap to open profile</span>
         </div>
         <div className="grid grid-cols-3 gap-2 text-sm">
           <div className="rounded-md bg-black/20 p-2">
             <p className="text-ink/45">MBTI</p>
-            <p className="font-semibold text-ink">{mbti?.consensusCode ?? "TBD"}</p>
+            <p className="font-semibold text-ink">{mbtiDisplay.code}</p>
           </div>
           <div className="rounded-md bg-black/20 p-2">
             <p className="text-ink/45">Enneagram</p>
-            <p className="font-semibold text-ink">{enneagram?.consensusCode ?? "TBD"}</p>
+            <p className="font-semibold text-ink">{enneagramDisplay.code}</p>
           </div>
           <div className="rounded-md bg-black/20 p-2">
             <p className="text-ink/45">Confidence</p>
-            <p className="font-semibold text-ink">{mbti ? `${mbti.confidence}%` : "0%"}</p>
+            <p className="font-semibold text-ink">{mbtiDisplay.confidence}%</p>
           </div>
         </div>
         <div className="flex items-center justify-between text-xs text-ink/45">
-          <span>{mbti?.totalVotes ?? 0} MBTI votes</span>
-          <span>{enneagram?.totalVotes ?? 0} Enneagram votes</span>
+          <span>{mbtiDisplay.totalVotes} MBTI votes</span>
+          <span>{enneagramDisplay.totalVotes} Enneagram votes</span>
         </div>
       </div>
     </Link>

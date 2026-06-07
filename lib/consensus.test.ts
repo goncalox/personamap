@@ -42,6 +42,21 @@ function vote(typeOptionId: string, index: number): Vote {
 }
 
 describe("calculateConsensus", () => {
+  it("returns an empty untyped consensus when a profile has zero votes", () => {
+    const consensus = calculateConsensus({
+      profileId,
+      systemCode: "MBTI",
+      typeOptions: options,
+      votes: [],
+    });
+
+    expect(consensus.consensusCode).toBeNull();
+    expect(consensus.confidence).toBe(0);
+    expect(consensus.totalVotes).toBe(0);
+    expect(consensus.status).toBe("Speculative");
+    expect(consensus.counts).toEqual([]);
+  });
+
   it("marks fewer than three counted votes as speculative even at 100% confidence", () => {
     const consensus = calculateConsensus({
       profileId,

@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { useActionState } from "react";
 import { submitVoteAction } from "@/app/actions";
+import { getConsensusDisplay } from "@/lib/profile-display";
 import type { ProfileWithConsensus, TypeOption, TypingSystem } from "@/lib/types";
 
 export function VotePanel({
@@ -26,6 +27,25 @@ export function VotePanel({
       <p className="mt-1 text-sm leading-6 text-ink/55">
         Choose the type you think fits best. Your vote updates consensus once you are signed in.
       </p>
+      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        {visibleSystems.map((system) => {
+          const consensus = profile.consensus.find((item) => item.systemCode === system.code);
+          const display = getConsensusDisplay(consensus);
+
+          return (
+            <div key={`${system.id}-summary`} className="rounded-md border border-white/10 bg-black/20 p-3 text-sm">
+              <p className="text-xs uppercase tracking-[0.16em] text-ink/45">{system.code}</p>
+              <div className="mt-2 flex items-center justify-between gap-3">
+                <span className="font-semibold text-ink">{display.code}</span>
+                <span className="text-ink/55">{display.confidence}% confidence</span>
+              </div>
+              <p className="mt-2 text-xs text-ink/45">
+                {display.totalVotes === 0 ? "No votes yet." : `${display.totalVotes} votes so far.`} {display.status}
+              </p>
+            </div>
+          );
+        })}
+      </div>
       <div className="mt-5 grid gap-4 md:grid-cols-2">
         {visibleSystems.map((system) => (
           <form key={system.id} action={formAction} className="rounded-lg border border-white/10 bg-black/20 p-4">

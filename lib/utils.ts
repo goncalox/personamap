@@ -15,8 +15,27 @@ export function slugify(value: string) {
     .slice(0, 80);
 }
 
-export function formatCategory(category: string) {
-  return category === "public_figure" ? "Public figure" : "Fictional";
+export function formatCategory(category: string | null | undefined) {
+  if (!category) return "Unknown category";
+  if (category === "public_figure") return "Public figure";
+  if (category === "fictional") return "Fictional";
+
+  return category
+    .replace(/[_-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/\b\w/g, (character) => character.toUpperCase());
+}
+
+export function getInitials(value: string) {
+  const parts = value
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2);
+
+  if (parts.length === 0) return "?";
+  return parts.map((part) => part[0]?.toUpperCase() ?? "").join("") || "?";
 }
 
 export function formatDate(date: string) {

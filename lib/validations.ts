@@ -5,7 +5,12 @@ export const profileSchema = z.object({
   name: z.string().trim().min(2, "Name must be at least 2 characters."),
   category: z.enum(["fictional", "public_figure"]),
   source_title: z.string().trim().optional(),
-  description: z.string().trim().min(20, "Description needs at least 20 characters."),
+  description: z
+    .string()
+    .trim()
+    .max(4000, "Description is too long.")
+    .optional()
+    .or(z.literal("")),
   image_url: z
     .string()
     .trim()

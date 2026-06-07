@@ -28,6 +28,9 @@ export function EvidenceForm({
       <p className="mt-1 text-sm leading-6 text-ink/55">
         Add a short argument that explains why this type should move up, down, or stay put.
       </p>
+      <p className="mt-2 text-xs leading-5 text-ink/45">
+        No evidence yet is normal for newly added profiles. A concise first card gives future voters something concrete to react to.
+      </p>
       <form action={formAction} className="mt-5 grid gap-4">
         <input type="hidden" name="profileId" value={profile.id} />
         <input type="hidden" name="profileSlug" value={profile.slug} />
