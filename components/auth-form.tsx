@@ -20,8 +20,16 @@ export function AuthForm({
     <form action={formAction} className="mx-auto w-full max-w-md rounded-lg border border-white/10 bg-white/[0.04] p-5 shadow-glow">
       <h1 className="text-3xl font-semibold text-ink">{isLogin ? "Log in" : "Create account"}</h1>
       <p className="mt-2 text-sm leading-6 text-ink/60">
-        {isLogin ? "Vote and submit evidence with your PersonaMap account." : "Join the debate with email and password auth."}
+        {isLogin
+          ? "Log in to vote, add evidence, and create profiles."
+          : "Create an account to start voting and contributing to profiles."}
       </p>
+      {!isLogin ? (
+        <p className="mt-3 text-sm leading-6 text-ink/50">
+          If your Supabase project requires email confirmation, you may need to check your inbox before the account
+          becomes active.
+        </p>
+      ) : null}
       <div className="mt-6 grid gap-4">
         <label className="grid gap-2 text-sm font-medium text-ink">
           Email
@@ -30,6 +38,7 @@ export function AuthForm({
             name="email"
             autoComplete="email"
             required
+            placeholder="you@example.com"
             className="min-h-11 rounded-md border border-white/10 bg-coal px-3 text-ink outline-none focus:border-brass"
           />
         </label>
@@ -41,12 +50,15 @@ export function AuthForm({
             autoComplete={isLogin ? "current-password" : "new-password"}
             required
             minLength={6}
+            placeholder="At least 6 characters"
             className="min-h-11 rounded-md border border-white/10 bg-coal px-3 text-ink outline-none focus:border-brass"
           />
         </label>
       </div>
       {state.message ? (
-        <p className={state.ok ? "mt-4 text-sm text-emerald-300" : "mt-4 text-sm text-wine"}>{state.message}</p>
+        <p role="status" className={state.ok ? "mt-4 text-sm text-emerald-300" : "mt-4 text-sm text-wine"}>
+          {state.message}
+        </p>
       ) : null}
       <button
         disabled={pending}

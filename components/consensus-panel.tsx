@@ -16,7 +16,7 @@ export function ConsensusPanel({ consensus }: { consensus: ProfileConsensus[] })
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-xs uppercase tracking-[0.18em] text-ink/45">{item.systemCode}</p>
-              <h2 className="mt-2 text-3xl font-semibold text-ink">{item.consensusCode ?? "Unclear"}</h2>
+              <h3 className="mt-2 text-3xl font-semibold text-ink">{item.consensusCode ?? "Unclear"}</h3>
               <p className="text-sm text-ink/55">{item.totalVotes} votes</p>
             </div>
             <span className={cn("rounded-md border px-2.5 py-1 text-xs font-semibold", statusTone[item.status])}>

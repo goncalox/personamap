@@ -26,7 +26,7 @@ export default async function ProfileDetailPage({ params }: { params: Promise<{ 
   return (
     <main>
       <section className="border-b border-white/10 bg-black/15">
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[320px_1fr]">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[340px_1fr]">
           <div className="aspect-[4/5] overflow-hidden rounded-lg border border-white/10 bg-white/[0.04]">
             {profile.image_url ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -38,13 +38,35 @@ export default async function ProfileDetailPage({ params }: { params: Promise<{ 
             <h1 className="mt-3 text-5xl font-semibold text-ink">{profile.name}</h1>
             {profile.source_title ? <p className="mt-3 text-xl text-ink/55">{profile.source_title}</p> : null}
             <p className="mt-6 max-w-3xl text-base leading-7 text-ink/70">{profile.description}</p>
+            <div className="mt-6 flex flex-wrap gap-2">
+              <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-sm text-ink/75">
+                Current consensus below
+              </span>
+              <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-sm text-ink/75">
+                Vote to change the read
+              </span>
+              <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-sm text-ink/75">
+                Add evidence when you have it
+              </span>
+            </div>
           </div>
         </div>
       </section>
 
       <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[1fr_360px]">
         <div className="space-y-6">
-          <ConsensusPanel consensus={profile.consensus} />
+          <section>
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brass">Consensus</p>
+                <h2 className="mt-2 text-3xl font-semibold text-ink">Current read</h2>
+              </div>
+              <p className="text-sm text-ink/55">Higher confidence means stronger agreement.</p>
+            </div>
+            <div className="mt-4">
+              <ConsensusPanel consensus={profile.consensus} />
+            </div>
+          </section>
           <section className="rounded-lg border border-white/10 bg-white/[0.04] p-5">
             <h2 className="text-xl font-semibold text-ink">Why this type?</h2>
             <p className="mt-3 leading-7 text-ink/70">{whyThisType}</p>
@@ -65,8 +87,8 @@ export default async function ProfileDetailPage({ params }: { params: Promise<{ 
               {evidence.length > 0 ? (
                 evidence.map((card) => <EvidenceCard key={card.id} evidence={card} />)
               ) : (
-                <div className="rounded-lg border border-dashed border-white/15 p-8 text-center text-ink/55">
-                  No evidence cards yet.
+                <div className="rounded-lg border border-dashed border-white/15 bg-white/[0.03] p-8 text-center text-ink/55">
+                  No evidence cards yet. Add the first one to explain why this type is winning or challenged.
                 </div>
               )}
             </div>

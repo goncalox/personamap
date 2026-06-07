@@ -23,7 +23,9 @@ export function VotePanel({
   return (
     <section className="rounded-lg border border-white/10 bg-white/[0.04] p-5">
       <h2 className="text-xl font-semibold text-ink">Cast a vote</h2>
-      <p className="mt-1 text-sm text-ink/55">Voting is protected by Supabase auth once env vars are configured.</p>
+      <p className="mt-1 text-sm leading-6 text-ink/55">
+        Choose the type you think fits best. Your vote updates consensus once you are signed in.
+      </p>
       <div className="mt-5 grid gap-4 md:grid-cols-2">
         {visibleSystems.map((system) => (
           <form key={system.id} action={formAction} className="rounded-lg border border-white/10 bg-black/20 p-4">
@@ -54,9 +56,12 @@ export function VotePanel({
             <button
               disabled={pending}
               className="mt-3 inline-flex min-h-10 items-center justify-center rounded-md bg-brass px-4 text-sm font-semibold text-coal transition hover:bg-ink disabled:opacity-60"
-            >
+              >
               Save {system.code}
             </button>
+            <p className="mt-2 text-xs leading-5 text-ink/45">
+              Tip: vote one system at a time. MBTI and Enneagram are tracked separately.
+            </p>
           </form>
         ))}
       </div>

@@ -30,6 +30,12 @@ export function ProfileCard({ profile }: { profile: ProfileWithConsensus }) {
           </div>
           <ArrowUpRight className="size-4 shrink-0 text-ink/35 transition group-hover:text-brass" aria-hidden />
         </div>
+        <div className="flex items-center justify-between gap-3">
+          <span className="rounded-full border border-white/10 bg-black/20 px-2.5 py-1 text-xs font-semibold text-ink/75">
+            {mbti?.status ?? "Consensus pending"}
+          </span>
+          <span className="text-xs text-ink/45">Tap to open profile</span>
+        </div>
         <div className="grid grid-cols-3 gap-2 text-sm">
           <div className="rounded-md bg-black/20 p-2">
             <p className="text-ink/45">MBTI</p>

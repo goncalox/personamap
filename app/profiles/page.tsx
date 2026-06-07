@@ -15,12 +15,15 @@ export default async function ProfilesPage({
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brass">Profiles</p>
-          <h1 className="mt-2 text-4xl font-semibold text-ink">Personality database</h1>
+          <h1 className="mt-2 text-4xl font-semibold text-ink">Browse profiles and compare consensus</h1>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-ink/60">
+            Search by name or source, narrow by category, and see which types are winning right now.
+          </p>
         </div>
         <p className="text-sm text-ink/55">{profiles.length} profiles</p>
       </div>
 
-      <form className="mt-8 grid gap-3 rounded-lg border border-white/10 bg-white/[0.04] p-3 md:grid-cols-[1fr_180px_180px_120px]">
+      <form className="mt-8 grid gap-3 rounded-lg border border-white/10 bg-white/[0.04] p-4 md:grid-cols-[1fr_180px_180px_120px]">
         <label className="flex min-h-11 items-center gap-3 rounded-md border border-white/10 bg-coal px-3">
           <Search className="size-4 text-ink/40" aria-hidden />
           <input
@@ -56,11 +59,20 @@ export default async function ProfilesPage({
         </button>
       </form>
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {profiles.map((profile) => (
-          <ProfileCard key={profile.id} profile={profile} />
-        ))}
-      </div>
+      {profiles.length > 0 ? (
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {profiles.map((profile) => (
+            <ProfileCard key={profile.id} profile={profile} />
+          ))}
+        </div>
+      ) : (
+        <div className="mt-8 rounded-lg border border-dashed border-white/15 bg-white/[0.03] p-10 text-center">
+          <p className="text-lg font-semibold text-ink">No profiles match those filters.</p>
+          <p className="mt-2 text-sm leading-6 text-ink/60">
+            Try a broader search, clear the filters, or add a new profile if you are looking for something specific.
+          </p>
+        </div>
+      )}
     </main>
   );
 }

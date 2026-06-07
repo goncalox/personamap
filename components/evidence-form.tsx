@@ -25,6 +25,9 @@ export function EvidenceForm({
   return (
     <section className="rounded-lg border border-white/10 bg-white/[0.04] p-5">
       <h2 className="text-xl font-semibold text-ink">Add evidence</h2>
+      <p className="mt-1 text-sm leading-6 text-ink/55">
+        Add a short argument that explains why this type should move up, down, or stay put.
+      </p>
       <form action={formAction} className="mt-5 grid gap-4">
         <input type="hidden" name="profileId" value={profile.id} />
         <input type="hidden" name="profileSlug" value={profile.slug} />
@@ -46,7 +49,10 @@ export function EvidenceForm({
           </label>
           <label className="grid gap-2 text-sm font-medium text-ink">
             Type
-            <select name="typeOptionId" className="min-h-11 rounded-md border border-white/10 bg-coal px-3 text-ink outline-none focus:border-brass">
+            <select
+              name="typeOptionId"
+              className="min-h-11 rounded-md border border-white/10 bg-coal px-3 text-ink outline-none focus:border-brass"
+            >
               {visibleOptions.map((option) => (
                 <option key={option.id} value={option.id}>
                   {option.code}
@@ -76,6 +82,7 @@ export function EvidenceForm({
             name="body"
             rows={5}
             required
+            placeholder="What did they say or do that supports this typing?"
             className="rounded-md border border-white/10 bg-coal px-3 py-3 text-ink outline-none focus:border-brass"
           />
         </label>

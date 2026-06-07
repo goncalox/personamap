@@ -4,7 +4,10 @@ import { Navbar } from "@/components/navbar";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "PersonaMap",
+  title: {
+    default: "PersonaMap",
+    template: "%s | PersonaMap",
+  },
   description: "Evidence-based personality typing for characters and public figures.",
 };
 
