@@ -55,7 +55,7 @@ test.describe("PersonaMap hosted smoke", () => {
 
     const unique = Date.now();
     const slug = `playwright-profile-${unique}`;
-    const authEmail = email!.replace(/@gmail\.com$/i, `+personamap-${unique}@gmail.com`);
+    const authEmail = email!;
 
     await page.goto("/login", { waitUntil: "networkidle" });
     await page.getByLabel("Email").fill(authEmail);
