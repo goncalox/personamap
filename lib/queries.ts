@@ -1,7 +1,24 @@
 import { calculateConsensus } from "@/lib/consensus";
 import { buildProfilesWithConsensus, evidenceCards, profiles, typeOptions, typingSystems, votes } from "@/lib/seed-data";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import type { PostgrestError } from "@supabase/supabase-js";
 import type { EvidenceCard, Profile, ProfileWithConsensus, TypeOption, TypingSystem, Vote } from "@/lib/types";
+
+function logSupabaseQueryError(context: {
+  scope: string;
+  table: string;
+  slug?: string;
+  profileId?: string;
+  details?: Record<string, unknown>;
+}, error: PostgrestError) {
+  console.error("[supabase-query-error]", {
+    ...context,
+    code: error.code,
+    message: error.message,
+    details: error.details,
+    hint: error.hint,
+  });
+}
 
 export async function getCurrentUser() {
   const supabase = await createSupabaseServerClient();
@@ -20,8 +37,14 @@ export async function getTypingData(): Promise<{ typingSystems: TypingSystem[]; 
     supabase.from("type_options").select("*").order("code"),
   ]);
 
-  if (systemsError) throw new Error(`Failed to load typing systems: ${systemsError.message}`);
-  if (optionsError) throw new Error(`Failed to load type options: ${optionsError.message}`);
+  if (systemsError) {
+    logSupabaseQueryError({ scope: "getTypingData", table: "typing_systems" }, systemsError);
+    throw new Error("Failed to load typing systems.");
+  }
+  if (optionsError) {
+    logSupabaseQueryError({ scope: "getTypingData", table: "type_options" }, optionsError);
+    throw new Error("Failed to load type options.");
+  }
 
   return {
     typingSystems: (systems as TypingSystem[] | null) ?? typingSystems,
@@ -54,10 +77,22 @@ export async function getProfiles(params?: {
       supabase.from("type_options").select("*"),
     ]);
 
-    if (profileError) throw new Error(`Failed to load profiles: ${profileError.message}`);
-    if (voteError) throw new Error(`Failed to load votes: ${voteError.message}`);
-    if (systemsError) throw new Error(`Failed to load typing systems: ${systemsError.message}`);
-    if (optionsError) throw new Error(`Failed to load type options: ${optionsError.message}`);
+    if (profileError) {
+      logSupabaseQueryError({ scope: "getProfiles", table: "profiles", details: params }, profileError);
+      throw new Error("Failed to load profiles.");
+    }
+    if (voteError) {
+      logSupabaseQueryError({ scope: "getProfiles", table: "votes", details: params }, voteError);
+      throw new Error("Failed to load votes.");
+    }
+    if (systemsError) {
+      logSupabaseQueryError({ scope: "getProfiles", table: "typing_systems", details: params }, systemsError);
+      throw new Error("Failed to load typing systems.");
+    }
+    if (optionsError) {
+      logSupabaseQueryError({ scope: "getProfiles", table: "type_options", details: params }, optionsError);
+      throw new Error("Failed to load type options.");
+    }
 
     loadedProfiles = (profileRows as Profile[] | null) ?? profiles;
     loadedVotes = (voteRows as Vote[] | null) ?? votes;
@@ -113,21 +148,41 @@ export async function getFeaturedProfiles() {
 }
 
 export async function getProfileBySlug(slug: string) {
-  const allProfiles = await getProfiles();
-  return allProfiles.find((profile) => profile.slug === slug) ?? null;
+  try {
+    const allProfiles = await getProfiles();
+    return allProfiles.find((profile) => profile.slug === slug) ?? null;
+  } catch (error) {
+    console.error("[profile-detail-load-error]", {
+      scope: "getProfileBySlug",
+      slug,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    throw error;
+  }
 }
 
-export async function getEvidenceForProfile(profileId: string): Promise<EvidenceCard[]> {
+export async function getEvidenceForProfile(profileId: string, context?: { slug?: string }): Promise<EvidenceCard[]> {
   const supabase = await createSupabaseServerClient();
   if (!supabase) return evidenceCards.filter((card) => card.profile_id === profileId);
 
   const { data, error } = await supabase
     .from("evidence_cards")
-    .select("*, type_options(code, label)")
+    .select("*")
     .eq("profile_id", profileId)
     .order("score", { ascending: false });
 
-  if (error) throw new Error(`Failed to load evidence cards: ${error.message}`);
+  if (error) {
+    logSupabaseQueryError(
+      {
+        scope: "getEvidenceForProfile",
+        table: "evidence_cards",
+        slug: context?.slug,
+        profileId,
+      },
+      error,
+    );
+    throw new Error("Failed to load evidence cards.");
+  }
   return (data as EvidenceCard[] | null) ?? evidenceCards.filter((card) => card.profile_id === profileId);
 }
 

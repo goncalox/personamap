@@ -7,20 +7,44 @@ import { summarizeEvidence } from "@/lib/consensus";
 import { getEvidenceForProfile, getProfileBySlug, getTypingData } from "@/lib/queries";
 import { formatCategory } from "@/lib/utils";
 
+async function loadProfileDetailData(slug: string, profileId: string) {
+  try {
+    const [{ typingSystems, typeOptions }, evidence] = await Promise.all([
+      getTypingData(),
+      getEvidenceForProfile(profileId, { slug }),
+    ]);
+    const typeOptionMap = new Map(typeOptions.map((option) => [option.id, option]));
+    const evidenceWithTypes = evidence.map((card) => {
+      const matchedType = typeOptionMap.get(card.type_option_id);
+
+      return {
+        ...card,
+        type_options: card.type_options ?? (matchedType ? { code: matchedType.code, label: matchedType.label } : null),
+      };
+    });
+
+    return { typingSystems, typeOptions, evidenceWithTypes };
+  } catch (error) {
+    console.error("[profile-detail-render-error]", {
+      slug,
+      profileId,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    throw error;
+  }
+}
+
 export default async function ProfileDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const profile = await getProfileBySlug(slug);
   if (!profile) notFound();
 
-  const [{ typingSystems, typeOptions }, evidence] = await Promise.all([
-    getTypingData(),
-    getEvidenceForProfile(profile.id),
-  ]);
+  const { typingSystems, typeOptions, evidenceWithTypes } = await loadProfileDetailData(slug, profile.id);
 
   const mbtiConsensus = profile.consensus.find((item) => item.systemCode === "MBTI");
   const whyThisType = summarizeEvidence({
     consensusCode: mbtiConsensus?.consensusCode ?? null,
-    evidence,
+    evidence: evidenceWithTypes,
   });
 
   return (
@@ -84,8 +108,8 @@ export default async function ProfileDetailPage({ params }: { params: Promise<{ 
               </div>
             </div>
             <div className="mt-5 grid gap-4">
-              {evidence.length > 0 ? (
-                evidence.map((card) => <EvidenceCard key={card.id} evidence={card} />)
+              {evidenceWithTypes.length > 0 ? (
+                evidenceWithTypes.map((card) => <EvidenceCard key={card.id} evidence={card} />)
               ) : (
                 <div className="rounded-lg border border-dashed border-white/15 bg-white/[0.03] p-8 text-center text-ink/55">
                   No evidence cards yet. Add the first one to explain why this type is winning or challenged.
