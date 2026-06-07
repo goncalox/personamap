@@ -55,12 +55,39 @@ test.describe("PersonaMap hosted smoke", () => {
 
     const unique = Date.now();
     const slug = `playwright-profile-${unique}`;
+    const authEmail = email!.replace(/@gmail\.com$/i, `+personamap-${unique}@gmail.com`);
+
+    await page.goto("/signup", { waitUntil: "networkidle" });
+    await page.getByLabel("Email").fill(authEmail);
+    await page.getByLabel("Password").fill(password!);
+    await page.getByRole("button", { name: "Sign up" }).click();
+    await expect
+      .poll(
+        async () => page.getByRole("link", { name: /Logout|Logout/i }).isVisible().catch(() => false),
+        { timeout: 30_000 },
+      )
+      .toBe(true);
+    await expect(page.getByRole("link", { name: /Logout|Logout/i })).toBeVisible();
+
+    await page.getByRole("link", { name: /Logout|Logout/i }).click();
+    await page.waitForURL("**/", { timeout: 30_000 });
+    await expect(page.getByRole("link", { name: /Login/i })).toBeVisible();
 
     await page.goto("/login", { waitUntil: "networkidle" });
-    await page.getByLabel("Email").fill(email!);
+    await page.getByLabel("Email").fill(authEmail);
     await page.getByLabel("Password").fill(password!);
     await page.getByRole("button", { name: "Log in" }).click();
-    await page.waitForURL("**/profiles", { timeout: 30_000 });
+    await expect
+      .poll(
+        async () => {
+          const hasLogout = await page.getByRole("link", { name: /Logout|Logout/i }).isVisible().catch(() => false);
+          return { hasLogout };
+        },
+        { timeout: 30_000 },
+      )
+      .toMatchObject({
+        hasLogout: true,
+      });
     await expect(page.getByRole("link", { name: /Logout|Logout/i })).toBeVisible();
 
     await page.goto("/profiles/new", { waitUntil: "networkidle" });
