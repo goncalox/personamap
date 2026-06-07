@@ -1,12 +1,14 @@
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
+import { getSupabaseEnvStatus } from "@/lib/supabase/check-env";
 
 export function hasSupabaseEnv() {
-  return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+  return getSupabaseEnvStatus().configured;
 }
 
 export async function createSupabaseServerClient() {
-  if (!hasSupabaseEnv()) return null;
+  const envStatus = getSupabaseEnvStatus();
+  if (!envStatus.configured) return null;
 
   const cookieStore = await cookies();
   type CookieToSet = {

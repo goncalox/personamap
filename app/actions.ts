@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { authSchema, evidenceSchema, profileSchema } from "@/lib/validations";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -38,10 +39,16 @@ export async function signUpAction(_prevState: ActionState, formData: FormData):
     return { ok: false, message: "Add Supabase env vars to enable authentication." };
   }
 
-  const { error } = await supabase.auth.signUp(parsed.data);
+  const origin = (await headers()).get("origin") ?? "http://localhost:3000";
+  const { error } = await supabase.auth.signUp({
+    ...parsed.data,
+    options: {
+      emailRedirectTo: `${origin}/login`,
+    },
+  });
   if (error) return { ok: false, message: error.message };
 
-  return { ok: true, message: "Account created. Check your email if confirmation is enabled." };
+  redirect("/profiles");
 }
 
 export async function signOutAction() {
@@ -74,6 +81,7 @@ export async function createProfileAction(_prevState: ActionState, formData: For
     .from("profiles")
     .insert({
       ...parsed.data,
+      created_by: user.id,
       source_title: parsed.data.source_title || null,
       image_url: parsed.data.image_url || null,
     })

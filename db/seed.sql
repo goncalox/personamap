@@ -35,37 +35,7 @@ on conflict (slug) do update set
   description = excluded.description,
   image_url = excluded.image_url;
 
-insert into votes (profile_id, user_id, typing_system_id, type_option_id)
-select p.id, v.user_id::uuid, ts.id, o.id
-from (
-  values
-    ('walter-white','00000000-0000-4000-8000-000000000001','MBTI','INTJ'),
-    ('walter-white','00000000-0000-4000-8000-000000000002','MBTI','INTJ'),
-    ('walter-white','00000000-0000-4000-8000-000000000003','MBTI','INTJ'),
-    ('walter-white','00000000-0000-4000-8000-000000000004','MBTI','ENTJ'),
-    ('walter-white','00000000-0000-4000-8000-000000000005','ENNEAGRAM','5w6'),
-    ('tony-stark','00000000-0000-4000-8000-000000000001','MBTI','ENTP'),
-    ('tony-stark','00000000-0000-4000-8000-000000000002','MBTI','ENTP'),
-    ('tony-stark','00000000-0000-4000-8000-000000000003','ENNEAGRAM','7w8'),
-    ('sherlock-holmes','00000000-0000-4000-8000-000000000001','MBTI','INTP'),
-    ('sherlock-holmes','00000000-0000-4000-8000-000000000002','ENNEAGRAM','5w6'),
-    ('batman-bruce-wayne','00000000-0000-4000-8000-000000000001','MBTI','INTJ')
-) as v(profile_slug, user_id, system_code, option_code)
-join profiles p on p.slug = v.profile_slug
-join typing_systems ts on ts.code = v.system_code
-join type_options o on o.typing_system_id = ts.id and o.code = v.option_code
-on conflict (user_id, profile_id, typing_system_id) do update set
-  type_option_id = excluded.type_option_id,
-  updated_at = now();
-
-insert into evidence_cards (profile_id, user_id, typing_system_id, type_option_id, title, body, stance, score)
-select p.id, e.user_id::uuid, ts.id, o.id, e.title, e.body, e.stance, e.score
-from (
-  values
-    ('walter-white','00000000-0000-4000-8000-000000000001','MBTI','INTJ','Long-range identity construction','Walter repeatedly chooses strategies that preserve a private vision of competence and legacy, even when faster emotional repairs are available.','for',18),
-    ('walter-white','00000000-0000-4000-8000-000000000002','MBTI','ENTJ','Direct control under pressure','His best moments often involve asserting command, structuring people around goals, and measuring success through external leverage.','against',9),
-    ('tony-stark','00000000-0000-4000-8000-000000000003','MBTI','ENTP','Prototype-first problem solving','Tony explores possibilities by building, sparring, testing limits, and revising quickly instead of protecting one fixed master plan.','for',21)
-) as e(profile_slug, user_id, system_code, option_code, title, body, stance, score)
-join profiles p on p.slug = e.profile_slug
-join typing_systems ts on ts.code = e.system_code
-join type_options o on o.typing_system_id = ts.id and o.code = e.option_code;
+-- Votes and evidence are intentionally not seeded here.
+-- Those rows reference auth.users(id), so inserting fake user ids would break
+-- foreign keys and undermine the RLS model. Create a user through Supabase Auth,
+-- then use the app UI to create votes and evidence.

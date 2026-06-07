@@ -8,6 +8,7 @@ create table if not exists profiles (
   source_title text,
   description text not null,
   image_url text,
+  created_by uuid references auth.users(id) on delete set null,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -39,7 +40,7 @@ end $$;
 create table if not exists votes (
   id uuid primary key default gen_random_uuid(),
   profile_id uuid not null references profiles(id) on delete cascade,
-  user_id uuid not null,
+  user_id uuid not null references auth.users(id) on delete cascade,
   typing_system_id uuid not null references typing_systems(id) on delete cascade,
   type_option_id uuid not null references type_options(id) on delete cascade,
   created_at timestamptz not null default now(),
@@ -63,7 +64,7 @@ end $$;
 create table if not exists evidence_cards (
   id uuid primary key default gen_random_uuid(),
   profile_id uuid not null references profiles(id) on delete cascade,
-  user_id uuid not null,
+  user_id uuid not null references auth.users(id) on delete cascade,
   typing_system_id uuid not null references typing_systems(id) on delete cascade,
   type_option_id uuid not null references type_options(id) on delete cascade,
   title text not null,
@@ -90,7 +91,7 @@ end $$;
 create table if not exists evidence_votes (
   id uuid primary key default gen_random_uuid(),
   evidence_card_id uuid not null references evidence_cards(id) on delete cascade,
-  user_id uuid not null,
+  user_id uuid not null references auth.users(id) on delete cascade,
   value integer not null check (value in (-1, 1)),
   created_at timestamptz not null default now(),
   unique (user_id, evidence_card_id)
@@ -99,7 +100,7 @@ create table if not exists evidence_votes (
 create table if not exists comments (
   id uuid primary key default gen_random_uuid(),
   profile_id uuid not null references profiles(id) on delete cascade,
-  user_id uuid not null,
+  user_id uuid not null references auth.users(id) on delete cascade,
   body text not null,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -147,7 +148,13 @@ drop policy if exists "Profiles are public" on profiles;
 create policy "Profiles are public" on profiles for select using (true);
 
 drop policy if exists "Authenticated users create profiles" on profiles;
-create policy "Authenticated users create profiles" on profiles for insert to authenticated with check (true);
+create policy "Authenticated users create profiles" on profiles for insert to authenticated with check (auth.uid() = created_by);
+
+drop policy if exists "Users update own profiles" on profiles;
+create policy "Users update own profiles" on profiles for update to authenticated using (auth.uid() = created_by) with check (auth.uid() = created_by);
+
+drop policy if exists "Users delete own profiles" on profiles;
+create policy "Users delete own profiles" on profiles for delete to authenticated using (auth.uid() = created_by);
 
 drop policy if exists "Typing systems are public" on typing_systems;
 create policy "Typing systems are public" on typing_systems for select using (true);
@@ -164,11 +171,20 @@ create policy "Users create own votes" on votes for insert to authenticated with
 drop policy if exists "Users update own votes" on votes;
 create policy "Users update own votes" on votes for update to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
+drop policy if exists "Users delete own votes" on votes;
+create policy "Users delete own votes" on votes for delete to authenticated using (auth.uid() = user_id);
+
 drop policy if exists "Evidence cards are public" on evidence_cards;
 create policy "Evidence cards are public" on evidence_cards for select using (true);
 
 drop policy if exists "Users create own evidence" on evidence_cards;
 create policy "Users create own evidence" on evidence_cards for insert to authenticated with check (auth.uid() = user_id);
+
+drop policy if exists "Users update own evidence" on evidence_cards;
+create policy "Users update own evidence" on evidence_cards for update to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+drop policy if exists "Users delete own evidence" on evidence_cards;
+create policy "Users delete own evidence" on evidence_cards for delete to authenticated using (auth.uid() = user_id);
 
 drop policy if exists "Evidence votes are public" on evidence_votes;
 create policy "Evidence votes are public" on evidence_votes for select using (true);
@@ -179,8 +195,17 @@ create policy "Users create own evidence votes" on evidence_votes for insert to 
 drop policy if exists "Users update own evidence votes" on evidence_votes;
 create policy "Users update own evidence votes" on evidence_votes for update to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
+drop policy if exists "Users delete own evidence votes" on evidence_votes;
+create policy "Users delete own evidence votes" on evidence_votes for delete to authenticated using (auth.uid() = user_id);
+
 drop policy if exists "Comments are public" on comments;
 create policy "Comments are public" on comments for select using (true);
 
 drop policy if exists "Users create own comments" on comments;
 create policy "Users create own comments" on comments for insert to authenticated with check (auth.uid() = user_id);
+
+drop policy if exists "Users update own comments" on comments;
+create policy "Users update own comments" on comments for update to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+drop policy if exists "Users delete own comments" on comments;
+create policy "Users delete own comments" on comments for delete to authenticated using (auth.uid() = user_id);
