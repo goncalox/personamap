@@ -123,7 +123,7 @@ export async function getEvidenceForProfile(profileId: string): Promise<Evidence
 
   const { data, error } = await supabase
     .from("evidence_cards")
-    .select("*, type_options(code, label)")
+    .select("*")
     .eq("profile_id", profileId)
     .order("score", { ascending: false });
 

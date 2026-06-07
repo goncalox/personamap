@@ -107,6 +107,33 @@ psql "$DATABASE_URL" -f db/seed.sql
 
 `db/schema.sql` creates the tables, constraints, indexes, timestamp triggers, and RLS policies. `db/seed.sql` creates MBTI and Enneagram options plus starter profiles. Votes and evidence are not seeded because they reference real `auth.users` rows.
 
+## TMDb Import Foundation
+
+PersonaMap now includes the server-side foundation for previewing movie character imports from TMDb.
+
+### TMDb Setup
+
+1. Create or sign in to a TMDb account.
+2. Open your TMDb account settings and copy the API Read Access Token.
+3. Add it to your environment as `TMDB_BEARER_TOKEN`.
+4. Keep this token server-side only. Do not expose it to the browser.
+
+### What It Enables
+
+- Fetch movie details and cast from TMDb on the server.
+- Preview draft character profiles before any import is automated.
+- Track future imports with the `external_imports` table added by the TMDb migration.
+
+### Migration To Run
+
+Paste the contents of:
+
+```text
+db/migrations/20260607_tmdb_imports.sql
+```
+
+into the Supabase SQL Editor after the main schema has already been applied.
+
 ## Run The App
 
 Start the dev server:

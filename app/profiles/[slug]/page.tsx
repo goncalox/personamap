@@ -4,23 +4,44 @@ import { EvidenceCard } from "@/components/evidence-card";
 import { EvidenceForm } from "@/components/evidence-form";
 import { VotePanel } from "@/components/vote-panel";
 import { summarizeEvidence } from "@/lib/consensus";
-import { getEvidenceForProfile, getProfileBySlug, getTypingData } from "@/lib/queries";
+import { getEvidenceForProfile, getProfileBySlug, getTypingData, getFallbackProfiles } from "@/lib/queries";
+import {
+  evidenceCards as fallbackEvidenceCards,
+  typeOptions as fallbackTypeOptions,
+  typingSystems as fallbackTypingSystems,
+} from "@/lib/seed-data";
 import { formatCategory } from "@/lib/utils";
 
 export default async function ProfileDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const profile = await getProfileBySlug(slug);
+  const [profileResult, typingResult] = await Promise.allSettled([getProfileBySlug(slug), getTypingData()]);
+  const fallbackProfile = getFallbackProfiles().find((item) => item.slug === slug) ?? null;
+  const profile =
+    profileResult.status === "fulfilled" && profileResult.value ? profileResult.value : fallbackProfile;
   if (!profile) notFound();
-
-  const [{ typingSystems, typeOptions }, evidence] = await Promise.all([
-    getTypingData(),
-    getEvidenceForProfile(profile.id),
-  ]);
+  const evidenceResult = await Promise.allSettled([getEvidenceForProfile(profile.id)]);
+  const typingSystems = typingResult.status === "fulfilled" ? typingResult.value.typingSystems : fallbackTypingSystems;
+  const typeOptions = typingResult.status === "fulfilled" ? typingResult.value.typeOptions : fallbackTypeOptions;
+  const evidence =
+    evidenceResult[0].status === "fulfilled"
+      ? evidenceResult[0].value
+      : fallbackEvidenceCards.filter((card) => card.profile_id === profile.id);
+  const evidenceWithTypes = evidence.map((card) => ({
+    ...card,
+    type_options:
+      card.type_options ??
+      (typeOptions.find((option) => option.id === card.type_option_id)
+        ? {
+            code: typeOptions.find((option) => option.id === card.type_option_id)?.code ?? "",
+            label: typeOptions.find((option) => option.id === card.type_option_id)?.label ?? "",
+          }
+        : null),
+  }));
 
   const mbtiConsensus = profile.consensus.find((item) => item.systemCode === "MBTI");
   const whyThisType = summarizeEvidence({
     consensusCode: mbtiConsensus?.consensusCode ?? null,
-    evidence,
+    evidence: evidenceWithTypes,
   });
 
   return (
@@ -84,8 +105,8 @@ export default async function ProfileDetailPage({ params }: { params: Promise<{ 
               </div>
             </div>
             <div className="mt-5 grid gap-4">
-              {evidence.length > 0 ? (
-                evidence.map((card) => <EvidenceCard key={card.id} evidence={card} />)
+              {evidenceWithTypes.length > 0 ? (
+                evidenceWithTypes.map((card) => <EvidenceCard key={card.id} evidence={card} />)
               ) : (
                 <div className="rounded-lg border border-dashed border-white/15 bg-white/[0.03] p-8 text-center text-ink/55">
                   No evidence cards yet. Add the first one to explain why this type is winning or challenged.
