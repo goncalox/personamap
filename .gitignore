@@ -8,3 +8,6 @@ dist
 coverage
 tsconfig.tsbuildinfo
 *.log
+test-results/
+playwright-report/
+.playwright/
