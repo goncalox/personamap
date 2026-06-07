@@ -5,6 +5,7 @@ import { formatCategory } from "@/lib/utils";
 
 export function ProfileCard({ profile }: { profile: ProfileWithConsensus }) {
   const mbti = profile.consensus.find((item) => item.systemCode === "MBTI");
+  const enneagram = profile.consensus.find((item) => item.systemCode === "ENNEAGRAM");
 
   return (
     <Link
@@ -42,13 +43,17 @@ export function ProfileCard({ profile }: { profile: ProfileWithConsensus }) {
             <p className="font-semibold text-ink">{mbti?.consensusCode ?? "TBD"}</p>
           </div>
           <div className="rounded-md bg-black/20 p-2">
+            <p className="text-ink/45">Enneagram</p>
+            <p className="font-semibold text-ink">{enneagram?.consensusCode ?? "TBD"}</p>
+          </div>
+          <div className="rounded-md bg-black/20 p-2">
             <p className="text-ink/45">Confidence</p>
             <p className="font-semibold text-ink">{mbti ? `${mbti.confidence}%` : "0%"}</p>
           </div>
-          <div className="rounded-md bg-black/20 p-2">
-            <p className="text-ink/45">Votes</p>
-            <p className="font-semibold text-ink">{mbti?.totalVotes ?? 0}</p>
-          </div>
+        </div>
+        <div className="flex items-center justify-between text-xs text-ink/45">
+          <span>{mbti?.totalVotes ?? 0} MBTI votes</span>
+          <span>{enneagram?.totalVotes ?? 0} Enneagram votes</span>
         </div>
       </div>
     </Link>

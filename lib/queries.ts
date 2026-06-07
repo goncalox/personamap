@@ -15,10 +15,13 @@ export async function getTypingData(): Promise<{ typingSystems: TypingSystem[]; 
   const supabase = await createSupabaseServerClient();
   if (!supabase) return { typingSystems, typeOptions };
 
-  const [{ data: systems }, { data: options }] = await Promise.all([
+  const [{ data: systems, error: systemsError }, { data: options, error: optionsError }] = await Promise.all([
     supabase.from("typing_systems").select("*").order("code"),
     supabase.from("type_options").select("*").order("code"),
   ]);
+
+  if (systemsError) throw new Error(`Failed to load typing systems: ${systemsError.message}`);
+  if (optionsError) throw new Error(`Failed to load type options: ${optionsError.message}`);
 
   return {
     typingSystems: (systems as TypingSystem[] | null) ?? typingSystems,
@@ -39,12 +42,22 @@ export async function getProfiles(params?: {
   let loadedOptions: TypeOption[] = typeOptions;
 
   if (supabase) {
-    const [{ data: profileRows }, { data: voteRows }, { data: systems }, { data: options }] = await Promise.all([
+    const [
+      { data: profileRows, error: profileError },
+      { data: voteRows, error: voteError },
+      { data: systems, error: systemsError },
+      { data: options, error: optionsError },
+    ] = await Promise.all([
       supabase.from("profiles").select("*").order("created_at", { ascending: false }),
       supabase.from("votes").select("*"),
       supabase.from("typing_systems").select("*"),
       supabase.from("type_options").select("*"),
     ]);
+
+    if (profileError) throw new Error(`Failed to load profiles: ${profileError.message}`);
+    if (voteError) throw new Error(`Failed to load votes: ${voteError.message}`);
+    if (systemsError) throw new Error(`Failed to load typing systems: ${systemsError.message}`);
+    if (optionsError) throw new Error(`Failed to load type options: ${optionsError.message}`);
 
     loadedProfiles = (profileRows as Profile[] | null) ?? profiles;
     loadedVotes = (voteRows as Vote[] | null) ?? votes;
@@ -108,12 +121,13 @@ export async function getEvidenceForProfile(profileId: string): Promise<Evidence
   const supabase = await createSupabaseServerClient();
   if (!supabase) return evidenceCards.filter((card) => card.profile_id === profileId);
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("evidence_cards")
     .select("*, type_options(code, label)")
     .eq("profile_id", profileId)
     .order("score", { ascending: false });
 
+  if (error) throw new Error(`Failed to load evidence cards: ${error.message}`);
   return (data as EvidenceCard[] | null) ?? evidenceCards.filter((card) => card.profile_id === profileId);
 }
 
