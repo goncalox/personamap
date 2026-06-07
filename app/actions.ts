@@ -1,11 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { authSchema, evidenceSchema, profileSchema } from "@/lib/validations";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { saveProtectedVote, type ActionState } from "@/lib/protected-voting";
+import { getSiteUrl } from "@/lib/site-url";
 
 function requireSupabase() {
   return createSupabaseServerClient();
@@ -39,11 +39,10 @@ export async function signUpAction(_prevState: ActionState, formData: FormData):
     return { ok: false, message: "Add Supabase env vars to enable authentication." };
   }
 
-  const origin = (await headers()).get("origin") ?? "http://localhost:3000";
   const { error } = await supabase.auth.signUp({
     ...parsed.data,
     options: {
-      emailRedirectTo: `${origin}/login`,
+      emailRedirectTo: `${getSiteUrl()}/login`,
     },
   });
   if (error) return { ok: false, message: error.message };

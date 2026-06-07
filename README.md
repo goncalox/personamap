@@ -74,6 +74,18 @@ https://your-domain.vercel.app/login
 https://your-domain.vercel.app/profiles
 ```
 
+## Deploy To Vercel
+
+1. Push the repo to GitHub.
+2. Import the repository into Vercel.
+3. Add environment variables in Vercel:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - optionally `NEXT_PUBLIC_SITE_URL` if you want to pin auth redirects to a canonical domain
+4. Deploy the app.
+5. After Vercel gives you the deployment URL, add the production auth redirect URLs in Supabase Auth settings.
+6. Redeploy if you change environment variables.
+
 ## Database Setup
 
 Run the schema first, then the seed.
