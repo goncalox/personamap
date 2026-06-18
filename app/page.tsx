@@ -15,8 +15,8 @@ export default async function HomePage() {
             PersonaMap helps people type characters and public figures with receipts, not vibes.
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-ink/68">
-            Track what the community thinks, see how confident the consensus is, and read the evidence behind each
-            typing. It is a database for debate, not a popularity contest.
+            Browse clean profiles, see the initial typing read when one exists, and keep evidence attached to the
+            character instead of buried in comment noise.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link
@@ -63,9 +63,9 @@ export default async function HomePage() {
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <h2 className="text-lg font-semibold text-ink">Consensus, not popularity</h2>
+                <h2 className="text-lg font-semibold text-ink">Profiles first</h2>
                 <p className="mt-1 text-sm leading-6 text-ink/60">
-                  Votes roll up into a visible consensus so you can see what is winning and how sure it is.
+                  The launch experience is built around clean character pages that stay useful before activity builds up.
                 </p>
               </div>
               <div>
@@ -87,18 +87,18 @@ export default async function HomePage() {
           <div className="flex gap-4">
             <BookOpen className="mt-1 size-5 shrink-0 text-brass" aria-hidden />
             <div>
-              <h2 className="font-semibold text-ink">Votes need context</h2>
+              <h2 className="font-semibold text-ink">Browse by source</h2>
               <p className="mt-1 text-sm leading-6 text-ink/60">
-                See the current read, the confidence level, and the strongest arguments underneath it.
+                Search by character, person, or source title and move through the database without forum clutter.
               </p>
             </div>
           </div>
           <div className="flex gap-4">
             <Users className="mt-1 size-5 shrink-0 text-ocean" aria-hidden />
             <div>
-              <h2 className="font-semibold text-ink">Confidence is visible</h2>
+              <h2 className="font-semibold text-ink">Typing can grow</h2>
               <p className="mt-1 text-sm leading-6 text-ink/60">
-                Speculative, contested, and consensus labels stay explicit so people know how settled a type really is.
+                Empty profiles feel intentional, while seeded reads appear as early labels that can evolve.
               </p>
             </div>
           </div>

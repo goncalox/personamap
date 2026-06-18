@@ -100,7 +100,7 @@ export async function submitVoteAction(_prevState: ActionState, formData: FormDa
 
   const supabase = await requireSupabase();
   if (!supabase) {
-    return { ok: false, message: "Add Supabase env vars to vote." };
+    return { ok: false, message: "Add Supabase env vars to suggest a type." };
   }
 
   const result = await saveProtectedVote(rawInput, {

@@ -3,12 +3,32 @@ import { getConsensusDisplay, getProfileDescription } from "@/lib/profile-displa
 import { formatCategory, getInitials } from "@/lib/utils";
 
 describe("profile display helpers", () => {
-  it("shows an untyped needs-votes state when no consensus exists yet", () => {
+  it("shows an intentional pending state when no consensus exists yet", () => {
     expect(getConsensusDisplay(null)).toEqual({
       code: "Untyped",
       confidence: 0,
-      status: "Needs votes",
+      confidenceLabel: "Pending",
+      status: "Typing pending",
       totalVotes: 0,
+    });
+  });
+
+  it("shows a single seeded vote as an initial read instead of mature consensus", () => {
+    expect(
+      getConsensusDisplay({
+        profileId: "profile-1",
+        systemCode: "MBTI",
+        consensusCode: "INTJ",
+        consensusLabel: "INTJ",
+        confidence: 100,
+        totalVotes: 1,
+        status: "Speculative",
+        counts: [{ code: "INTJ", label: "INTJ", percentage: 100, votes: 1 }],
+      }),
+    ).toMatchObject({
+      code: "INTJ",
+      confidenceLabel: "Early",
+      status: "Initial read",
     });
   });
 

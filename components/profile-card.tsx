@@ -9,6 +9,7 @@ export function ProfileCard({ profile }: { profile: ProfileWithConsensus }) {
   const enneagram = profile.consensus.find((item) => item.systemCode === "ENNEAGRAM");
   const mbtiDisplay = getConsensusDisplay(mbti);
   const enneagramDisplay = getConsensusDisplay(enneagram);
+  const primaryDisplay = mbtiDisplay.totalVotes > 0 ? mbtiDisplay : enneagramDisplay.totalVotes > 0 ? enneagramDisplay : mbtiDisplay;
 
   return (
     <Link
@@ -42,7 +43,7 @@ export function ProfileCard({ profile }: { profile: ProfileWithConsensus }) {
         </div>
         <div className="flex items-center justify-between gap-3">
           <span className="rounded-full border border-white/10 bg-black/20 px-2.5 py-1 text-xs font-semibold text-ink/75">
-            {mbtiDisplay.status}
+            {primaryDisplay.status}
           </span>
           <span className="text-xs text-ink/45">Tap to open profile</span>
         </div>
@@ -56,13 +57,9 @@ export function ProfileCard({ profile }: { profile: ProfileWithConsensus }) {
             <p className="font-semibold text-ink">{enneagramDisplay.code}</p>
           </div>
           <div className="rounded-md bg-black/20 p-2">
-            <p className="text-ink/45">Confidence</p>
-            <p className="font-semibold text-ink">{mbtiDisplay.confidence}%</p>
+            <p className="text-ink/45">Read</p>
+            <p className="font-semibold text-ink">{primaryDisplay.confidenceLabel}</p>
           </div>
-        </div>
-        <div className="flex items-center justify-between text-xs text-ink/45">
-          <span>{mbtiDisplay.totalVotes} MBTI votes</span>
-          <span>{enneagramDisplay.totalVotes} Enneagram votes</span>
         </div>
       </div>
     </Link>

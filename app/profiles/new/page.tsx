@@ -10,7 +10,7 @@ export default async function NewProfilePage() {
       <h1 className="mt-2 text-4xl font-semibold text-ink">Add a character or public figure</h1>
       <p className="mt-4 max-w-2xl leading-7 text-ink/65">
         {user
-          ? "Profiles start with only the core facts. Consensus and evidence build up through community votes."
+          ? "Profiles start with only the core facts. Typing and evidence can build up after the profile exists."
           : "You can preview the form, but Supabase auth is required to save a new profile."}
       </p>
       <div className="mt-8">

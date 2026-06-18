@@ -29,9 +29,11 @@ export default async function ProfileDetailPage({ params }: { params: Promise<{ 
   if (!profile) notFound();
   const { typingSystems, typeOptions, evidenceWithTypes } = await loadProfileDetailData(profile.id);
 
-  const mbtiConsensus = profile.consensus.find((item) => item.systemCode === "MBTI");
+  const primaryConsensus =
+    profile.consensus.find((item) => item.systemCode === "MBTI" && item.consensusCode) ??
+    profile.consensus.find((item) => item.consensusCode);
   const whyThisType = summarizeEvidence({
-    consensusCode: mbtiConsensus?.consensusCode ?? null,
+    consensusCode: primaryConsensus?.consensusCode ?? null,
     evidence: evidenceWithTypes,
   });
 
@@ -58,10 +60,10 @@ export default async function ProfileDetailPage({ params }: { params: Promise<{ 
             <p className="mt-6 max-w-3xl text-base leading-7 text-ink/70">{getProfileDescription(profile.description)}</p>
             <div className="mt-6 flex flex-wrap gap-2">
               <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-sm text-ink/75">
-                Current consensus below
+                Current read below
               </span>
               <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-sm text-ink/75">
-                Vote to change the read
+                Typing can evolve
               </span>
               <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-sm text-ink/75">
                 Add evidence when you have it
@@ -76,10 +78,10 @@ export default async function ProfileDetailPage({ params }: { params: Promise<{ 
           <section>
             <div className="flex items-end justify-between gap-4">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brass">Consensus</p>
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brass">Typing</p>
                 <h2 className="mt-2 text-3xl font-semibold text-ink">Current read</h2>
               </div>
-              <p className="text-sm text-ink/55">Higher confidence means stronger agreement.</p>
+              <p className="text-sm text-ink/55">Early reads are labels, not final verdicts.</p>
             </div>
             <div className="mt-4">
               <ConsensusPanel consensus={profile.consensus} />
@@ -108,8 +110,7 @@ export default async function ProfileDetailPage({ params }: { params: Promise<{ 
                 <div className="rounded-lg border border-dashed border-white/15 bg-white/[0.03] p-8 text-center text-ink/55">
                   <p className="text-lg font-semibold text-ink">No evidence yet</p>
                   <p className="mt-2 text-sm leading-6 text-ink/60">
-                    This profile can still be voted on. Add the first evidence card to explain why a type should rise,
-                    fall, or stay in place.
+                    Add the first evidence card to explain why a type should rise, fall, or stay in place.
                   </p>
                 </div>
               )}

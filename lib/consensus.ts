@@ -54,7 +54,7 @@ export function summarizeEvidence(params: {
   evidence: Array<{ title: string; stance: "for" | "against"; score: number }>;
 }) {
   if (!params.consensusCode) {
-    return "There are not enough votes yet to form a typing case.";
+    return "There is not enough evidence yet to explain this profile's typing.";
   }
 
   const forTitles = params.evidence

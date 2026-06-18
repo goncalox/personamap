@@ -15,7 +15,7 @@ export default async function ProfilesPage({
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brass">Profiles</p>
-          <h1 className="mt-2 text-4xl font-semibold text-ink">Browse profiles and compare consensus</h1>
+          <h1 className="mt-2 text-4xl font-semibold text-ink">Browse profiles and typing reads</h1>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-ink/60">
             Search by name or source, narrow by category, and see which types are winning right now.
           </p>

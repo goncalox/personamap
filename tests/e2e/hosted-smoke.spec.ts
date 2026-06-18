@@ -97,7 +97,7 @@ test.describe("PersonaMap hosted smoke", () => {
     await expect(page.getByText(`Playwright Profile ${unique}`)).toBeVisible();
 
     await page.goto("/profiles/walter-white", { waitUntil: "networkidle" });
-    await expect(page.getByText("Cast a vote")).toBeVisible();
+    await expect(page.getByText("Suggest a typing")).toBeVisible();
     await expect(page.getByText("Add evidence")).toBeVisible();
   });
 });

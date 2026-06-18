@@ -23,9 +23,9 @@ export function VotePanel({
 
   return (
     <section className="rounded-lg border border-white/10 bg-white/[0.04] p-5">
-      <h2 className="text-xl font-semibold text-ink">Cast a vote</h2>
+      <h2 className="text-xl font-semibold text-ink">Suggest a typing</h2>
       <p className="mt-1 text-sm leading-6 text-ink/55">
-        Choose the type you think fits best. Your vote updates consensus once you are signed in.
+        Choose the type you think fits best. Signed-in suggestions can help the profile settle over time.
       </p>
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
         {visibleSystems.map((system) => {
@@ -37,11 +37,9 @@ export function VotePanel({
               <p className="text-xs uppercase tracking-[0.16em] text-ink/45">{system.code}</p>
               <div className="mt-2 flex items-center justify-between gap-3">
                 <span className="font-semibold text-ink">{display.code}</span>
-                <span className="text-ink/55">{display.confidence}% confidence</span>
+                <span className="text-ink/55">{display.confidenceLabel}</span>
               </div>
-              <p className="mt-2 text-xs text-ink/45">
-                {display.totalVotes === 0 ? "No votes yet." : `${display.totalVotes} votes so far.`} {display.status}
-              </p>
+              <p className="mt-2 text-xs text-ink/45">{display.status}</p>
             </div>
           );
         })}
@@ -80,7 +78,7 @@ export function VotePanel({
               Save {system.code}
             </button>
             <p className="mt-2 text-xs leading-5 text-ink/45">
-              Tip: vote one system at a time. MBTI and Enneagram are tracked separately.
+              Tip: save one system at a time. MBTI and Enneagram are tracked separately.
             </p>
           </form>
         ))}

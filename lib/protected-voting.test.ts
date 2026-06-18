@@ -34,7 +34,7 @@ describe("saveProtectedVote", () => {
 
     const result = await saveProtectedVote(input, deps);
 
-    expect(result).toEqual({ ok: false, message: "Log in to vote." });
+    expect(result).toEqual({ ok: false, message: "Log in to suggest a type." });
     expect(deps.getTypeOption).not.toHaveBeenCalled();
     expect(deps.upsertVote).not.toHaveBeenCalled();
   });
@@ -56,12 +56,12 @@ describe("saveProtectedVote", () => {
     expect(deps.upsertVote).not.toHaveBeenCalled();
   });
 
-  it("writes the vote with Supabase snake_case columns for authenticated users", async () => {
+  it("writes the suggestion with Supabase snake_case columns for authenticated users", async () => {
     const deps = dependencies();
 
     const result = await saveProtectedVote(input, deps);
 
-    expect(result).toEqual({ ok: true, message: "Vote saved." });
+    expect(result).toEqual({ ok: true, message: "Typing suggestion saved." });
     expect(deps.upsertVote).toHaveBeenCalledWith({
       profile_id: input.profileId,
       user_id: "40000000-0000-4000-8000-000000000001",

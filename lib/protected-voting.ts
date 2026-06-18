@@ -26,12 +26,12 @@ export async function saveProtectedVote(
 ): Promise<ActionState> {
   const parsed = voteSchema.safeParse(rawInput);
   if (!parsed.success) {
-    return { ok: false, message: parsed.error.issues[0]?.message ?? "Invalid vote." };
+    return { ok: false, message: parsed.error.issues[0]?.message ?? "Invalid typing suggestion." };
   }
 
   const user = await dependencies.getCurrentUser();
   if (!user) {
-    return { ok: false, message: "Log in to vote." };
+    return { ok: false, message: "Log in to suggest a type." };
   }
 
   const typeOption = await dependencies.getTypeOption(parsed.data.typeOptionId);
@@ -49,5 +49,5 @@ export async function saveProtectedVote(
 
   if (error) return { ok: false, message: error.message };
 
-  return { ok: true, message: "Vote saved." };
+  return { ok: true, message: "Typing suggestion saved." };
 }

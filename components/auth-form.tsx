@@ -21,8 +21,8 @@ export function AuthForm({
       <h1 className="text-3xl font-semibold text-ink">{isLogin ? "Log in" : "Create account"}</h1>
       <p className="mt-2 text-sm leading-6 text-ink/60">
         {isLogin
-          ? "Log in to vote, add evidence, and create profiles."
-          : "Create an account to start voting and contributing to profiles."}
+          ? "Log in to suggest typings, add evidence, and create profiles."
+          : "Create an account to suggest typings and contribute to profiles."}
       </p>
       {!isLogin ? (
         <p className="mt-3 text-sm leading-6 text-ink/50">
