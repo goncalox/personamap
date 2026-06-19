@@ -9,6 +9,8 @@ const defaultCategories = [
 export type ProfileFilterParams = {
   q?: string;
   category?: string;
+  mbti?: string;
+  enneagram?: string;
   system?: string;
   type?: string;
 };
@@ -24,11 +26,31 @@ export function normalizeProfileCategory(category: string | null | undefined) {
   return normalized && normalized !== "all" ? normalized : "all";
 }
 
+export function normalizeProfileType(type: string | null | undefined) {
+  const normalized = type?.trim();
+  return normalized && normalized !== "all" ? normalized : "all";
+}
+
 export function filterProfilesByCategory(profiles: ProfileWithConsensus[], category: string | null | undefined) {
   const normalizedCategory = normalizeProfileCategory(category);
   if (normalizedCategory === "all") return profiles;
 
   return profiles.filter((profile) => profile.category === normalizedCategory);
+}
+
+export function filterProfilesByTyping(profiles: ProfileWithConsensus[], params: Pick<ProfileFilterParams, "mbti" | "enneagram">) {
+  const mbti = normalizeProfileType(params.mbti);
+  const enneagram = normalizeProfileType(params.enneagram);
+
+  return profiles.filter((profile) => {
+    const matchesMbti =
+      mbti === "all" || profile.consensus.some((consensus) => consensus.systemCode === "MBTI" && consensus.consensusCode === mbti);
+    const matchesEnneagram =
+      enneagram === "all" ||
+      profile.consensus.some((consensus) => consensus.systemCode === "ENNEAGRAM" && consensus.consensusCode === enneagram);
+
+    return matchesMbti && matchesEnneagram;
+  });
 }
 
 export function getProfileCategoryOptions(profiles: ProfileWithConsensus[]): ProfileCategoryOption[] {
@@ -58,6 +80,8 @@ export function hasActiveProfileFilters(params: ProfileFilterParams) {
   return Boolean(
     params.q?.trim() ||
       normalizeProfileCategory(params.category) !== "all" ||
+      normalizeProfileType(params.mbti) !== "all" ||
+      normalizeProfileType(params.enneagram) !== "all" ||
       (params.type && params.type !== "all") ||
       (params.system && params.system !== "all"),
   );

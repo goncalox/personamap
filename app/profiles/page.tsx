@@ -3,18 +3,21 @@ import { Search, X } from "lucide-react";
 import { ProfileCard } from "@/components/profile-card";
 import {
   filterProfilesByCategory,
+  filterProfilesByTyping,
   getProfileCategoryOptions,
   hasActiveProfileFilters,
   normalizeProfileCategory,
+  normalizeProfileType,
 } from "@/lib/profile-filters";
 import { getProfiles, getTypingData } from "@/lib/queries";
 import { cn } from "@/lib/utils";
 
-function profilesHref(params: { q?: string; category?: string; type?: string }) {
+function profilesHref(params: { q?: string; category?: string; mbti?: string; enneagram?: string }) {
   const nextParams = new URLSearchParams();
   if (params.q?.trim()) nextParams.set("q", params.q.trim());
   if (params.category && params.category !== "all") nextParams.set("category", params.category);
-  if (params.type && params.type !== "all") nextParams.set("type", params.type);
+  if (params.mbti && params.mbti !== "all") nextParams.set("mbti", params.mbti);
+  if (params.enneagram && params.enneagram !== "all") nextParams.set("enneagram", params.enneagram);
 
   const query = nextParams.toString();
   return query ? `/profiles?${query}` : "/profiles";
@@ -23,16 +26,23 @@ function profilesHref(params: { q?: string; category?: string; type?: string }) 
 export default async function ProfilesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; category?: string; system?: string; type?: string }>;
+  searchParams: Promise<{ q?: string; category?: string; mbti?: string; enneagram?: string; system?: string; type?: string }>;
 }) {
   const params = await searchParams;
   const selectedCategory = normalizeProfileCategory(params.category);
-  const [{ typeOptions }, profileMatches] = await Promise.all([
+  const selectedMbti = normalizeProfileType(params.mbti);
+  const selectedEnneagram = normalizeProfileType(params.enneagram);
+  const [{ typingSystems, typeOptions }, searchMatches] = await Promise.all([
     getTypingData(),
-    getProfiles({ q: params.q, system: params.system, type: params.type }),
+    getProfiles({ q: params.q }),
   ]);
-  const profiles = filterProfilesByCategory(profileMatches, selectedCategory);
-  const categoryOptions = getProfileCategoryOptions(profileMatches);
+  const typingMatches = filterProfilesByTyping(searchMatches, { mbti: selectedMbti, enneagram: selectedEnneagram });
+  const profiles = filterProfilesByCategory(typingMatches, selectedCategory);
+  const categoryOptions = getProfileCategoryOptions(typingMatches);
+  const mbtiSystem = typingSystems.find((system) => system.code === "MBTI");
+  const enneagramSystem = typingSystems.find((system) => system.code === "ENNEAGRAM");
+  const mbtiOptions = typeOptions.filter((option) => option.typing_system_id === mbtiSystem?.id);
+  const enneagramOptions = typeOptions.filter((option) => option.typing_system_id === enneagramSystem?.id);
   const activeFilters = hasActiveProfileFilters(params);
 
   return (
@@ -47,12 +57,12 @@ export default async function ProfilesPage({
         </div>
         <div className="rounded-lg border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-ink/65">
           Showing <span className="font-semibold text-ink">{profiles.length}</span> of{" "}
-          <span className="font-semibold text-ink">{profileMatches.length}</span> matches
+          <span className="font-semibold text-ink">{typingMatches.length}</span> matches
         </div>
       </div>
 
       <section className="mt-8 rounded-lg border border-white/10 bg-white/[0.04] p-4">
-        <form className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_200px_auto_auto]">
+        <form className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_150px_180px_auto_auto]">
           <input type="hidden" name="category" value={selectedCategory} />
           <label className="flex min-h-12 items-center gap-3 rounded-md border border-white/10 bg-coal px-3 focus-within:border-brass">
             <Search className="size-4 shrink-0 text-ink/40" aria-hidden />
@@ -64,17 +74,33 @@ export default async function ProfilesPage({
               className="w-full bg-transparent text-sm text-ink outline-none placeholder:text-ink/35"
             />
           </label>
-          <label className="sr-only" htmlFor="type-filter">
-            Filter by type
+          <label className="sr-only" htmlFor="mbti-filter">
+            Filter by MBTI
           </label>
           <select
-            id="type-filter"
-            name="type"
-            defaultValue={params.type ?? "all"}
+            id="mbti-filter"
+            name="mbti"
+            defaultValue={selectedMbti}
             className="min-h-12 rounded-md border border-white/10 bg-coal px-3 text-sm text-ink outline-none transition focus:border-brass"
           >
-            <option value="all">All typings</option>
-            {typeOptions.map((option) => (
+            <option value="all">All MBTI</option>
+            {mbtiOptions.map((option) => (
+              <option key={option.id} value={option.code}>
+                {option.code}
+              </option>
+            ))}
+          </select>
+          <label className="sr-only" htmlFor="enneagram-filter">
+            Filter by Enneagram
+          </label>
+          <select
+            id="enneagram-filter"
+            name="enneagram"
+            defaultValue={selectedEnneagram}
+            className="min-h-12 rounded-md border border-white/10 bg-coal px-3 text-sm text-ink outline-none transition focus:border-brass"
+          >
+            <option value="all">All Enneagram</option>
+            {enneagramOptions.map((option) => (
               <option key={option.id} value={option.code}>
                 {option.code}
               </option>
@@ -102,7 +128,12 @@ export default async function ProfilesPage({
             return (
               <Link
                 key={category.value}
-                href={profilesHref({ q: params.q, type: params.type, category: category.value })}
+                href={profilesHref({
+                  q: params.q,
+                  mbti: selectedMbti,
+                  enneagram: selectedEnneagram,
+                  category: category.value,
+                })}
                 className={cn(
                   "inline-flex min-h-10 items-center gap-2 rounded-full border px-3 text-sm transition",
                   selected
