@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { useActionState } from "react";
 import { submitVoteAction } from "@/app/actions";
+import { SelectControl } from "@/components/select-control";
 import { getConsensusDisplay } from "@/lib/profile-display";
 import type { ProfileWithConsensus, TypeOption, TypingSystem } from "@/lib/types";
 
@@ -50,13 +51,10 @@ export function VotePanel({
             <input type="hidden" name="profileId" value={profile.id} />
             <input type="hidden" name="profileSlug" value={profile.slug} />
             <input type="hidden" name="typingSystemId" value={system.id} />
-            <label className="text-sm font-medium text-ink" htmlFor={`vote-${system.code}`}>
-              {system.code}
-            </label>
-            <select
+            <SelectControl
               id={`vote-${system.code}`}
               name="typeOptionId"
-              className="mt-2 min-h-11 w-full rounded-md border border-white/10 bg-coal px-3 text-sm text-ink outline-none transition focus:border-brass"
+              label={system.code}
               defaultValue=""
               required
             >
@@ -70,7 +68,7 @@ export function VotePanel({
                     {option.code}
                   </option>
                 ))}
-            </select>
+            </SelectControl>
             <button
               disabled={pending}
               className="mt-3 inline-flex min-h-10 items-center justify-center rounded-md bg-brass px-4 text-sm font-semibold text-coal transition hover:bg-ink disabled:opacity-60"

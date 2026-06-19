@@ -2,6 +2,7 @@
 
 import { useActionState, useMemo, useState } from "react";
 import { createProfileAction } from "@/app/actions";
+import { SelectControl } from "@/components/select-control";
 import { slugify } from "@/lib/utils";
 
 export function ProfileForm() {
@@ -40,14 +41,14 @@ export function ProfileForm() {
         </label>
       </div>
       <div className="grid gap-5 md:grid-cols-2">
-        <label className="grid gap-2 text-sm font-medium text-ink">
-          Category
-          <select name="category" className="min-h-11 rounded-md border border-white/10 bg-coal px-3 text-ink outline-none focus:border-brass">
-            <option value="fictional">Fictional</option>
-            <option value="public_figure">Public figure</option>
-          </select>
-          <p className="text-xs leading-5 text-ink/45">Pick fictional for characters and public figure for real people.</p>
-        </label>
+        <SelectControl
+          name="category"
+          label="Category"
+          helper="Pick fictional for characters and public figure for real people."
+        >
+          <option value="fictional">Fictional</option>
+          <option value="public_figure">Public figure</option>
+        </SelectControl>
         <label className="grid gap-2 text-sm font-medium text-ink">
           Source title
           <input

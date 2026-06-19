@@ -59,9 +59,11 @@ test.describe("PersonaMap hosted smoke", () => {
         hasMbti: Boolean(mbti),
         mbtiValue: mbti?.value,
         mbtiOptions: Array.from(mbti?.options ?? []).map((option) => option.value),
+        mbtiClass: mbti?.className,
         hasEnneagram: Boolean(enneagram),
         enneagramValue: enneagram?.value,
         enneagramOptions: Array.from(enneagram?.options ?? []).map((option) => option.value),
+        enneagramClass: enneagram?.className,
         hasCombinedType: Boolean(combinedType),
       };
     });
@@ -75,6 +77,8 @@ test.describe("PersonaMap hosted smoke", () => {
     expect(filters.enneagramOptions).toContain("5w6");
     expect(filters.enneagramOptions).not.toContain("INTJ");
     expect(filters.hasCombinedType).toBe(false);
+    expect(filters.mbtiClass).toContain("appearance-none");
+    expect(filters.enneagramClass).toContain("appearance-none");
   });
 
   test("optional auth and write flow", async ({ page }) => {

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Search, X } from "lucide-react";
 import { ProfileCard } from "@/components/profile-card";
+import { SelectControl } from "@/components/select-control";
 import {
   filterProfilesByCategory,
   filterProfilesByTyping,
@@ -76,38 +77,36 @@ export default async function ProfilesPage({
               />
             </span>
           </label>
-          <label className="grid gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-ink/45" htmlFor="mbti-filter">
-            MBTI
-            <select
-              id="mbti-filter"
-              name="mbti"
-              defaultValue={selectedMbti}
-              className="min-h-12 rounded-md border border-white/10 bg-coal px-3 text-sm normal-case tracking-normal text-ink outline-none transition focus:border-brass"
-            >
-              <option value="all">All MBTI</option>
-              {mbtiOptions.map((option) => (
-                <option key={option.id} value={option.code}>
-                  {option.code}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="grid gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-ink/45" htmlFor="enneagram-filter">
-            Enneagram
-            <select
-              id="enneagram-filter"
-              name="enneagram"
-              defaultValue={selectedEnneagram}
-              className="min-h-12 rounded-md border border-white/10 bg-coal px-3 text-sm normal-case tracking-normal text-ink outline-none transition focus:border-brass"
-            >
-              <option value="all">All Enneagram</option>
-              {enneagramOptions.map((option) => (
-                <option key={option.id} value={option.code}>
-                  {option.code}
-                </option>
-              ))}
-            </select>
-          </label>
+          <SelectControl
+            id="mbti-filter"
+            name="mbti"
+            label="MBTI"
+            defaultValue={selectedMbti}
+            labelClassName="text-xs font-semibold uppercase tracking-[0.16em] text-ink/45"
+            className="min-h-12 normal-case tracking-normal"
+          >
+            <option value="all">All MBTI</option>
+            {mbtiOptions.map((option) => (
+              <option key={option.id} value={option.code}>
+                {option.code}
+              </option>
+            ))}
+          </SelectControl>
+          <SelectControl
+            id="enneagram-filter"
+            name="enneagram"
+            label="Enneagram"
+            defaultValue={selectedEnneagram}
+            labelClassName="text-xs font-semibold uppercase tracking-[0.16em] text-ink/45"
+            className="min-h-12 normal-case tracking-normal"
+          >
+            <option value="all">All Enneagram</option>
+            {enneagramOptions.map((option) => (
+              <option key={option.id} value={option.code}>
+                {option.code}
+              </option>
+            ))}
+          </SelectControl>
           <button className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-ink px-4 text-sm font-semibold text-coal transition hover:bg-brass">
             <Search className="size-4" aria-hidden />
             Search

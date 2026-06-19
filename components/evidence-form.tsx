@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useActionState } from "react";
 import { submitEvidenceAction } from "@/app/actions";
+import { SelectControl } from "@/components/select-control";
 import type { ProfileWithConsensus, TypeOption, TypingSystem } from "@/lib/types";
 
 export function EvidenceForm({
@@ -35,41 +36,29 @@ export function EvidenceForm({
         <input type="hidden" name="profileId" value={profile.id} />
         <input type="hidden" name="profileSlug" value={profile.slug} />
         <div className="grid gap-4 md:grid-cols-3">
-          <label className="grid gap-2 text-sm font-medium text-ink">
-            System
-            <select
-              name="typingSystemId"
-              value={selectedSystemId}
-              onChange={(event) => setSelectedSystemId(event.target.value)}
-              className="min-h-11 rounded-md border border-white/10 bg-coal px-3 text-ink outline-none focus:border-brass"
-            >
-              {typingSystems.map((system) => (
-                <option key={system.id} value={system.id}>
-                  {system.code}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="grid gap-2 text-sm font-medium text-ink">
-            Type
-            <select
-              name="typeOptionId"
-              className="min-h-11 rounded-md border border-white/10 bg-coal px-3 text-ink outline-none focus:border-brass"
-            >
-              {visibleOptions.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.code}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="grid gap-2 text-sm font-medium text-ink">
-            Stance
-            <select name="stance" className="min-h-11 rounded-md border border-white/10 bg-coal px-3 text-ink outline-none focus:border-brass">
-              <option value="for">For</option>
-              <option value="against">Against</option>
-            </select>
-          </label>
+          <SelectControl
+            name="typingSystemId"
+            label="System"
+            value={selectedSystemId}
+            onChange={(event) => setSelectedSystemId(event.target.value)}
+          >
+            {typingSystems.map((system) => (
+              <option key={system.id} value={system.id}>
+                {system.code}
+              </option>
+            ))}
+          </SelectControl>
+          <SelectControl name="typeOptionId" label="Type">
+            {visibleOptions.map((option) => (
+              <option key={option.id} value={option.id}>
+                {option.code}
+              </option>
+            ))}
+          </SelectControl>
+          <SelectControl name="stance" label="Stance">
+            <option value="for">For</option>
+            <option value="against">Against</option>
+          </SelectControl>
         </div>
         <label className="grid gap-2 text-sm font-medium text-ink">
           Title
