@@ -47,6 +47,36 @@ test.describe("PersonaMap hosted smoke", () => {
     expect(errors).toEqual([]);
   });
 
+  test("profiles keep MBTI and Enneagram filters separate", async ({ page }) => {
+    await page.goto("/profiles?mbti=INTJ&enneagram=5w6", { waitUntil: "networkidle" });
+
+    const filters = await page.evaluate(() => {
+      const mbti = document.querySelector<HTMLSelectElement>('select[name="mbti"]');
+      const enneagram = document.querySelector<HTMLSelectElement>('select[name="enneagram"]');
+      const combinedType = document.querySelector<HTMLSelectElement>('select[name="type"]');
+
+      return {
+        hasMbti: Boolean(mbti),
+        mbtiValue: mbti?.value,
+        mbtiOptions: Array.from(mbti?.options ?? []).map((option) => option.value),
+        hasEnneagram: Boolean(enneagram),
+        enneagramValue: enneagram?.value,
+        enneagramOptions: Array.from(enneagram?.options ?? []).map((option) => option.value),
+        hasCombinedType: Boolean(combinedType),
+      };
+    });
+
+    expect(filters.hasMbti).toBe(true);
+    expect(filters.mbtiValue).toBe("INTJ");
+    expect(filters.mbtiOptions).toContain("INTJ");
+    expect(filters.mbtiOptions).not.toContain("5w6");
+    expect(filters.hasEnneagram).toBe(true);
+    expect(filters.enneagramValue).toBe("5w6");
+    expect(filters.enneagramOptions).toContain("5w6");
+    expect(filters.enneagramOptions).not.toContain("INTJ");
+    expect(filters.hasCombinedType).toBe(false);
+  });
+
   test("optional auth and write flow", async ({ page }) => {
     const email = process.env.E2E_TEST_EMAIL;
     const password = process.env.E2E_TEST_PASSWORD;

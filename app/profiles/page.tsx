@@ -62,50 +62,52 @@ export default async function ProfilesPage({
       </div>
 
       <section className="mt-8 rounded-lg border border-white/10 bg-white/[0.04] p-4">
-        <form className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_150px_180px_auto_auto]">
+        <form className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_150px_180px_auto_auto] lg:items-end">
           <input type="hidden" name="category" value={selectedCategory} />
-          <label className="flex min-h-12 items-center gap-3 rounded-md border border-white/10 bg-coal px-3 focus-within:border-brass">
-            <Search className="size-4 shrink-0 text-ink/40" aria-hidden />
-            <span className="sr-only">Search profiles</span>
-            <input
-              name="q"
-              defaultValue={params.q}
-              placeholder="Search Walter White, The Dark Knight..."
-              className="w-full bg-transparent text-sm text-ink outline-none placeholder:text-ink/35"
-            />
+          <label className="grid gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-ink/45">
+            Search
+            <span className="flex min-h-12 items-center gap-3 rounded-md border border-white/10 bg-coal px-3 focus-within:border-brass">
+              <Search className="size-4 shrink-0 text-ink/40" aria-hidden />
+              <input
+                name="q"
+                defaultValue={params.q}
+                placeholder="Search Walter White, The Dark Knight..."
+                className="w-full bg-transparent text-sm normal-case tracking-normal text-ink outline-none placeholder:text-ink/35"
+              />
+            </span>
           </label>
-          <label className="sr-only" htmlFor="mbti-filter">
-            Filter by MBTI
+          <label className="grid gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-ink/45" htmlFor="mbti-filter">
+            MBTI
+            <select
+              id="mbti-filter"
+              name="mbti"
+              defaultValue={selectedMbti}
+              className="min-h-12 rounded-md border border-white/10 bg-coal px-3 text-sm normal-case tracking-normal text-ink outline-none transition focus:border-brass"
+            >
+              <option value="all">All MBTI</option>
+              {mbtiOptions.map((option) => (
+                <option key={option.id} value={option.code}>
+                  {option.code}
+                </option>
+              ))}
+            </select>
           </label>
-          <select
-            id="mbti-filter"
-            name="mbti"
-            defaultValue={selectedMbti}
-            className="min-h-12 rounded-md border border-white/10 bg-coal px-3 text-sm text-ink outline-none transition focus:border-brass"
-          >
-            <option value="all">All MBTI</option>
-            {mbtiOptions.map((option) => (
-              <option key={option.id} value={option.code}>
-                {option.code}
-              </option>
-            ))}
-          </select>
-          <label className="sr-only" htmlFor="enneagram-filter">
-            Filter by Enneagram
+          <label className="grid gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-ink/45" htmlFor="enneagram-filter">
+            Enneagram
+            <select
+              id="enneagram-filter"
+              name="enneagram"
+              defaultValue={selectedEnneagram}
+              className="min-h-12 rounded-md border border-white/10 bg-coal px-3 text-sm normal-case tracking-normal text-ink outline-none transition focus:border-brass"
+            >
+              <option value="all">All Enneagram</option>
+              {enneagramOptions.map((option) => (
+                <option key={option.id} value={option.code}>
+                  {option.code}
+                </option>
+              ))}
+            </select>
           </label>
-          <select
-            id="enneagram-filter"
-            name="enneagram"
-            defaultValue={selectedEnneagram}
-            className="min-h-12 rounded-md border border-white/10 bg-coal px-3 text-sm text-ink outline-none transition focus:border-brass"
-          >
-            <option value="all">All Enneagram</option>
-            {enneagramOptions.map((option) => (
-              <option key={option.id} value={option.code}>
-                {option.code}
-              </option>
-            ))}
-          </select>
           <button className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-ink px-4 text-sm font-semibold text-coal transition hover:bg-brass">
             <Search className="size-4" aria-hidden />
             Search
