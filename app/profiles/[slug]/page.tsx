@@ -4,9 +4,11 @@ import { EvidenceCard } from "@/components/evidence-card";
 import { EvidenceForm } from "@/components/evidence-form";
 import { VotePanel } from "@/components/vote-panel";
 import { summarizeEvidence } from "@/lib/consensus";
-import { getProfileDescription } from "@/lib/profile-display";
+import { getConsensusDisplay, getProfileDescription } from "@/lib/profile-display";
 import { getEvidenceForProfile, getProfileBySlug, getTypingData } from "@/lib/queries";
 import { formatCategory, getInitials } from "@/lib/utils";
+
+const visibleSystemOrder = ["MBTI", "ENNEAGRAM"];
 
 async function loadProfileDetailData(profileId: string) {
   const [{ typingSystems, typeOptions }, evidence] = await Promise.all([getTypingData(), getEvidenceForProfile(profileId)]);
@@ -39,75 +41,79 @@ export default async function ProfileDetailPage({ params }: { params: Promise<{ 
 
   return (
     <main>
-      <section className="border-b border-white/10 bg-black/15">
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[340px_1fr]">
-          <div className="aspect-[4/5] overflow-hidden rounded-lg border border-white/10 bg-white/[0.04]">
+      <section className="border-b border-white/10 bg-black/[0.16]">
+        <div className="page-shell grid gap-8 py-10 sm:py-12 lg:grid-cols-[340px_1fr] lg:items-end">
+          <div className="glass-panel aspect-[4/5] overflow-hidden p-2">
             {profile.image_url ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={profile.image_url} alt="" className="h-full w-full object-cover" />
+              <img src={profile.image_url} alt="" className="h-full w-full rounded-md object-cover" />
             ) : (
-              <div className="flex h-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(212,175,55,0.28),_transparent_45%),linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.02))]">
+              <div className="flex h-full items-center justify-center rounded-md bg-[linear-gradient(135deg,rgba(244,240,232,0.11),rgba(198,161,91,0.16)_45%,rgba(71,123,142,0.13))]">
                 <div className="flex size-24 items-center justify-center rounded-full border border-white/10 bg-black/20 text-3xl font-semibold text-ink/80">
                   {getInitials(profile.name)}
                 </div>
               </div>
             )}
           </div>
-          <div className="flex flex-col justify-end">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-brass">{formatCategory(profile.category)}</p>
-            <h1 className="mt-3 text-5xl font-semibold text-ink">{profile.name}</h1>
-            {profile.source_title ? <p className="mt-3 text-xl text-ink/55">{profile.source_title}</p> : null}
-            <p className="mt-6 max-w-3xl text-base leading-7 text-ink/70">{getProfileDescription(profile.description)}</p>
-            <div className="mt-6 flex flex-wrap gap-2">
-              <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-sm text-ink/75">
-                Current read below
-              </span>
-              <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-sm text-ink/75">
-                Typing can evolve
-              </span>
-              <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-sm text-ink/75">
-                Add evidence when you have it
-              </span>
+          <div>
+            <p className="eyebrow">{formatCategory(profile.category)}</p>
+            <h1 className="mt-3 text-4xl font-semibold leading-tight text-ink sm:text-5xl">{profile.name}</h1>
+            {profile.source_title ? <p className="mt-3 text-lg text-ink/55 sm:text-xl">{profile.source_title}</p> : null}
+            <p className="body-copy mt-6 max-w-3xl text-ink/70">{getProfileDescription(profile.description)}</p>
+            <div className="mt-7 grid max-w-3xl gap-3 sm:grid-cols-2">
+              {profile.consensus
+                .filter((item) => visibleSystemOrder.includes(item.systemCode))
+                .sort((a, b) => visibleSystemOrder.indexOf(a.systemCode) - visibleSystemOrder.indexOf(b.systemCode))
+                .map((item) => {
+                  const display = getConsensusDisplay(item);
+
+                  return (
+                    <div key={item.systemCode} className="subtle-panel p-4">
+                      <p className="text-xs uppercase tracking-[0.16em] text-ink/45">{item.systemCode}</p>
+                      <div className="mt-2 flex items-end justify-between gap-3">
+                        <p className="text-2xl font-semibold text-ink">{display.code}</p>
+                        <p className="text-sm font-semibold text-brass">
+                          {display.confidenceLabel === "Pending" ? "0%" : display.confidenceLabel}
+                        </p>
+                      </div>
+                      <p className="mt-1 text-xs text-ink/45">{display.status}</p>
+                    </div>
+                  );
+                })}
             </div>
           </div>
         </div>
       </section>
 
-      <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[1fr_360px]">
+      <div className="page-shell grid gap-6 py-8 lg:grid-cols-[1fr_360px]">
         <div className="space-y-6">
           <section>
             <div className="flex items-end justify-between gap-4">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brass">Typing</p>
-                <h2 className="mt-2 text-3xl font-semibold text-ink">Current read</h2>
+                <p className="eyebrow">Typing</p>
+                <h2 className="section-title mt-2">Current read</h2>
               </div>
-              <p className="text-sm text-ink/55">Early reads are labels, not final verdicts.</p>
             </div>
             <div className="mt-4">
               <ConsensusPanel consensus={profile.consensus} />
             </div>
           </section>
-          <section className="rounded-lg border border-white/10 bg-white/[0.04] p-5">
+          <section className="glass-panel p-5">
             <h2 className="text-xl font-semibold text-ink">Why this type?</h2>
             <p className="mt-3 leading-7 text-ink/70">{whyThisType}</p>
           </section>
           <section>
             <div className="flex items-end justify-between gap-4">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-ocean">Evidence</p>
-                <h2 className="mt-2 text-3xl font-semibold text-ink">Argument cards</h2>
-              </div>
-              <div className="flex rounded-md border border-white/10 bg-black/25 p-1 text-sm text-ink/60">
-                <span className="rounded bg-white/10 px-3 py-1 text-ink">All</span>
-                <span className="px-3 py-1">For</span>
-                <span className="px-3 py-1">Against</span>
+                <p className="eyebrow text-ocean">Evidence</p>
+                <h2 className="section-title mt-2">Argument cards</h2>
               </div>
             </div>
             <div className="mt-5 grid gap-4">
               {evidenceWithTypes.length > 0 ? (
                 evidenceWithTypes.map((card) => <EvidenceCard key={card.id} evidence={card} />)
               ) : (
-                <div className="rounded-lg border border-dashed border-white/15 bg-white/[0.03] p-8 text-center text-ink/55">
+                <div className="glass-panel border-dashed p-8 text-center text-ink/55">
                   <p className="text-lg font-semibold text-ink">No evidence yet</p>
                   <p className="mt-2 text-sm leading-6 text-ink/60">
                     Add the first evidence card to explain why a type should rise, fall, or stay in place.
@@ -120,10 +126,6 @@ export default async function ProfileDetailPage({ params }: { params: Promise<{ 
         <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
           <VotePanel profile={profile} typingSystems={typingSystems} typeOptions={typeOptions} />
           <EvidenceForm profile={profile} typingSystems={typingSystems} typeOptions={typeOptions} />
-          <section className="rounded-lg border border-white/10 bg-white/[0.04] p-5">
-            <h2 className="text-xl font-semibold text-ink">Comments</h2>
-            <p className="mt-3 text-sm leading-6 text-ink/60">Comment threads are represented in the schema and ready for a follow-up action.</p>
-          </section>
         </aside>
       </div>
     </main>

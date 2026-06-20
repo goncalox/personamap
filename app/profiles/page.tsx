@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Search, X } from "lucide-react";
+import { Search, SlidersHorizontal, X } from "lucide-react";
 import { ProfileCard } from "@/components/profile-card";
 import { SelectControl } from "@/components/select-control";
 import {
@@ -47,27 +47,31 @@ export default async function ProfilesPage({
   const activeFilters = hasActiveProfileFilters(params);
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+    <main className="page-shell py-10 sm:py-12">
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brass">Profiles</p>
-          <h1 className="mt-2 text-4xl font-semibold text-ink">Browse profiles and typing reads</h1>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-ink/60">
-            Search by name or source, jump between categories, and narrow the directory without turning the page into a vote board.
+          <p className="eyebrow">Profiles</p>
+          <h1 className="section-title mt-2 sm:text-4xl">Browse the map</h1>
+          <p className="body-copy mt-3 max-w-2xl">
+            Find characters and public figures by name, source, category, MBTI, or Enneagram without mixing the systems.
           </p>
         </div>
-        <div className="rounded-lg border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-ink/65">
+        <div className="glass-panel w-fit px-4 py-3 text-sm text-ink/65">
           Showing <span className="font-semibold text-ink">{profiles.length}</span> of{" "}
           <span className="font-semibold text-ink">{typingMatches.length}</span> matches
         </div>
       </div>
 
-      <section className="mt-8 rounded-lg border border-white/10 bg-white/[0.04] p-4">
-        <form className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_150px_180px_auto_auto] lg:items-end">
+      <section className="glass-panel mt-8 p-4 sm:p-5">
+        <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-ink/72">
+          <SlidersHorizontal className="size-4 text-brass" aria-hidden />
+          Search and filters
+        </div>
+        <form className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_160px_190px_auto_auto] xl:items-end">
           <input type="hidden" name="category" value={selectedCategory} />
           <label className="grid gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-ink/45">
             Search
-            <span className="flex min-h-12 items-center gap-3 rounded-md border border-white/10 bg-coal px-3 focus-within:border-brass">
+            <span className="field-control flex min-h-12 items-center gap-3 px-3 focus-within:border-brass focus-within:ring-2 focus-within:ring-brass/20">
               <Search className="size-4 shrink-0 text-ink/40" aria-hidden />
               <input
                 name="q"
@@ -107,14 +111,14 @@ export default async function ProfilesPage({
               </option>
             ))}
           </SelectControl>
-          <button className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-ink px-4 text-sm font-semibold text-coal transition hover:bg-brass">
+          <button className="primary-action min-h-12 px-4">
             <Search className="size-4" aria-hidden />
             Search
           </button>
           {activeFilters ? (
             <Link
               href="/profiles"
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-white/10 px-4 text-sm font-semibold text-ink/75 transition hover:border-brass/70 hover:text-ink"
+              className="secondary-action min-h-12 px-4"
             >
               <X className="size-4" aria-hidden />
               Reset
@@ -122,7 +126,7 @@ export default async function ProfilesPage({
           ) : null}
         </form>
 
-        <div className="mt-4 flex flex-wrap gap-2">
+        <div className="mt-5 flex flex-wrap gap-2">
           {categoryOptions.map((category) => {
             const selected = selectedCategory === category.value;
 
@@ -136,9 +140,9 @@ export default async function ProfilesPage({
                   category: category.value,
                 })}
                 className={cn(
-                  "inline-flex min-h-10 items-center gap-2 rounded-full border px-3 text-sm transition",
+                  "inline-flex min-h-10 items-center gap-2 rounded-full border px-3.5 text-sm font-medium transition",
                   selected
-                    ? "border-brass bg-brass/15 text-brass"
+                    ? "border-brass bg-brass/15 text-brass shadow-[0_0_30px_rgba(198,161,91,0.08)]"
                     : "border-white/10 bg-black/20 text-ink/65 hover:border-brass/60 hover:text-ink",
                 )}
                 aria-current={selected ? "page" : undefined}
@@ -152,13 +156,13 @@ export default async function ProfilesPage({
       </section>
 
       {profiles.length > 0 ? (
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {profiles.map((profile) => (
             <ProfileCard key={profile.id} profile={profile} />
           ))}
         </div>
       ) : (
-        <div className="mt-8 rounded-lg border border-dashed border-white/15 bg-white/[0.03] p-10 text-center">
+        <div className="glass-panel mt-8 border-dashed p-10 text-center">
           <p className="text-lg font-semibold text-ink">No profiles match those filters.</p>
           <p className="mt-2 text-sm leading-6 text-ink/60">
             Try a broader search, clear the filters, or add a new profile if you are looking for something specific.

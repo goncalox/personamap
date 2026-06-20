@@ -6,6 +6,8 @@ import { submitEvidenceAction } from "@/app/actions";
 import { SelectControl } from "@/components/select-control";
 import type { ProfileWithConsensus, TypeOption, TypingSystem } from "@/lib/types";
 
+const visibleSystemOrder = ["MBTI", "ENNEAGRAM"];
+
 export function EvidenceForm({
   profile,
   typingSystems,
@@ -16,21 +18,27 @@ export function EvidenceForm({
   typeOptions: TypeOption[];
 }) {
   const [state, formAction, pending] = useActionState(submitEvidenceAction, { ok: false, message: "" });
-  const defaultSystem = typingSystems.find((system) => system.code === "MBTI") ?? typingSystems[0];
-  const [selectedSystemId, setSelectedSystemId] = useState(defaultSystem?.id ?? typingSystems[0]?.id ?? "");
+  const orderedSystems = useMemo(
+    () =>
+      [...typingSystems].sort((a, b) => {
+        const aIndex = visibleSystemOrder.includes(a.code) ? visibleSystemOrder.indexOf(a.code) : visibleSystemOrder.length;
+        const bIndex = visibleSystemOrder.includes(b.code) ? visibleSystemOrder.indexOf(b.code) : visibleSystemOrder.length;
+        return aIndex - bIndex;
+      }),
+    [typingSystems],
+  );
+  const defaultSystem = orderedSystems.find((system) => system.code === "MBTI") ?? orderedSystems[0];
+  const [selectedSystemId, setSelectedSystemId] = useState(defaultSystem?.id ?? orderedSystems[0]?.id ?? "");
   const visibleOptions = useMemo(
     () => typeOptions.filter((option) => option.typing_system_id === selectedSystemId),
     [selectedSystemId, typeOptions],
   );
 
   return (
-    <section className="rounded-lg border border-white/10 bg-white/[0.04] p-5">
+    <section className="glass-panel p-5">
       <h2 className="text-xl font-semibold text-ink">Add evidence</h2>
       <p className="mt-1 text-sm leading-6 text-ink/55">
-        Add a short argument that explains why this type should move up, down, or stay put.
-      </p>
-      <p className="mt-2 text-xs leading-5 text-ink/45">
-        No evidence yet is normal for newly added profiles. A concise first card gives future readers something concrete to react to.
+        Add a short argument tied to a specific system and type.
       </p>
       <form action={formAction} className="mt-5 grid gap-4">
         <input type="hidden" name="profileId" value={profile.id} />
@@ -42,7 +50,7 @@ export function EvidenceForm({
             value={selectedSystemId}
             onChange={(event) => setSelectedSystemId(event.target.value)}
           >
-            {typingSystems.map((system) => (
+            {orderedSystems.map((system) => (
               <option key={system.id} value={system.id}>
                 {system.code}
               </option>
@@ -65,7 +73,7 @@ export function EvidenceForm({
           <input
             name="title"
             required
-            className="min-h-11 rounded-md border border-white/10 bg-coal px-3 text-ink outline-none focus:border-brass"
+            className="field-control"
           />
         </label>
         <label className="grid gap-2 text-sm font-medium text-ink">
@@ -75,7 +83,7 @@ export function EvidenceForm({
             rows={5}
             required
             placeholder="What did they say or do that supports this typing?"
-            className="rounded-md border border-white/10 bg-coal px-3 py-3 text-ink outline-none focus:border-brass"
+            className="field-control min-h-32 py-3"
           />
         </label>
         {state.message ? (
@@ -83,7 +91,7 @@ export function EvidenceForm({
         ) : null}
         <button
           disabled={pending}
-          className="inline-flex min-h-11 w-fit items-center justify-center rounded-md bg-ink px-5 text-sm font-semibold text-coal transition hover:bg-brass disabled:opacity-60"
+          className="primary-action w-fit"
         >
           {pending ? "Posting..." : "Post evidence"}
         </button>

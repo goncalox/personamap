@@ -13,7 +13,7 @@ export function ProfileForm() {
   const slug = manualSlug || generatedSlug;
 
   return (
-    <form action={formAction} className="grid gap-5 rounded-lg border border-white/10 bg-white/[0.04] p-5 shadow-glow">
+    <form action={formAction} className="glass-panel grid gap-5 p-6">
       <div className="grid gap-5 md:grid-cols-2">
         <label className="grid gap-2 text-sm font-medium text-ink">
           Name
@@ -23,7 +23,7 @@ export function ProfileForm() {
             onChange={(event) => setName(event.target.value)}
             required
             placeholder="Walter White"
-            className="min-h-11 rounded-md border border-white/10 bg-coal px-3 text-ink outline-none focus:border-brass"
+            className="field-control"
           />
           <p className="text-xs leading-5 text-ink/45">Use the character or public figure name people will search for.</p>
         </label>
@@ -35,7 +35,7 @@ export function ProfileForm() {
             onChange={(event) => setManualSlug(slugify(event.target.value))}
             required
             placeholder="walter-white"
-            className="min-h-11 rounded-md border border-white/10 bg-coal px-3 text-ink outline-none focus:border-brass"
+            className="field-control"
           />
           <p className="text-xs leading-5 text-ink/45">This becomes the profile URL. Letters, numbers, and hyphens only.</p>
         </label>
@@ -54,7 +54,7 @@ export function ProfileForm() {
           <input
             name="source_title"
             placeholder="Breaking Bad"
-            className="min-h-11 rounded-md border border-white/10 bg-coal px-3 text-ink outline-none focus:border-brass"
+            className="field-control"
           />
           <p className="text-xs leading-5 text-ink/45">The book, show, movie, or public context this person is known for.</p>
         </label>
@@ -65,7 +65,7 @@ export function ProfileForm() {
           name="image_url"
           type="url"
           placeholder="https://..."
-          className="min-h-11 rounded-md border border-white/10 bg-coal px-3 text-ink outline-none focus:border-brass"
+          className="field-control"
         />
         <p className="text-xs leading-5 text-ink/45">Optional. A direct image URL works best.</p>
       </label>
@@ -75,20 +75,27 @@ export function ProfileForm() {
           name="description"
           rows={6}
           placeholder="Optional. Add a short summary if helpful."
-          className="rounded-md border border-white/10 bg-coal px-3 py-3 text-ink outline-none focus:border-brass"
+          className="field-control min-h-36 py-3"
         />
         <p className="text-xs leading-5 text-ink/45">
           Optional. Leave blank if the profile is just getting started and let the community add context later.
         </p>
       </label>
       {state.message ? (
-        <p role="status" className={state.ok ? "text-sm text-emerald-300" : "text-sm text-wine"}>
+        <p
+          role="status"
+          className={
+            state.ok
+              ? "rounded-md border border-emerald-300/25 bg-emerald-300/10 px-3 py-2 text-sm text-emerald-200"
+              : "rounded-md border border-wine/35 bg-wine/10 px-3 py-2 text-sm text-red-200"
+          }
+        >
           {state.message}
         </p>
       ) : null}
       <button
         disabled={pending}
-        className="inline-flex min-h-11 w-fit items-center justify-center rounded-md bg-ink px-5 text-sm font-semibold text-coal transition hover:bg-brass disabled:opacity-60"
+        className="primary-action w-fit"
       >
         {pending ? "Creating..." : "Create profile"}
       </button>

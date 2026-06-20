@@ -4,12 +4,12 @@ import { cn, formatDate } from "@/lib/utils";
 
 export function EvidenceCard({ evidence }: { evidence: EvidenceCardType }) {
   return (
-    <article className="rounded-lg border border-white/10 bg-white/[0.04] p-4">
+    <article className="glass-panel p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
           <span
             className={cn(
-              "rounded-md border px-2 py-1 text-xs font-semibold uppercase",
+              "rounded-full border px-2.5 py-1 text-xs font-semibold uppercase",
               evidence.stance === "for"
                 ? "border-emerald-300/40 bg-emerald-300/10 text-emerald-200"
                 : "border-wine/50 bg-wine/15 text-red-200",
@@ -17,7 +17,7 @@ export function EvidenceCard({ evidence }: { evidence: EvidenceCardType }) {
           >
             {evidence.stance}
           </span>
-          <span className="rounded-md bg-black/25 px-2 py-1 text-xs font-semibold text-ink">
+          <span className="rounded-full border border-white/10 bg-black/25 px-2.5 py-1 text-xs font-semibold text-ink">
             {evidence.type_options?.code ?? "Type"}
           </span>
         </div>
@@ -29,7 +29,7 @@ export function EvidenceCard({ evidence }: { evidence: EvidenceCardType }) {
       </div>
       <h3 className="mt-4 text-lg font-semibold text-ink">{evidence.title}</h3>
       <p className="mt-2 text-sm leading-6 text-ink/70">{evidence.body}</p>
-      <div className="mt-4 flex items-center justify-between gap-3 text-xs text-ink/40">
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-4 text-xs text-ink/40">
         <p>{formatDate(evidence.created_at)}</p>
         <p>{evidence.type_options?.label ?? "Type still being clarified"}</p>
       </div>

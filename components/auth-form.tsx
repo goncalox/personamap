@@ -17,9 +17,10 @@ export function AuthForm({
   const isLogin = mode === "login";
 
   return (
-    <form action={formAction} className="mx-auto w-full max-w-md rounded-lg border border-white/10 bg-white/[0.04] p-5 shadow-glow">
-      <h1 className="text-3xl font-semibold text-ink">{isLogin ? "Log in" : "Create account"}</h1>
-      <p className="mt-2 text-sm leading-6 text-ink/60">
+    <form action={formAction} className="glass-panel mx-auto w-full max-w-md p-6">
+      <p className="eyebrow">{isLogin ? "Welcome back" : "Join PersonaMap"}</p>
+      <h1 className="mt-2 text-3xl font-semibold text-ink">{isLogin ? "Log in" : "Create account"}</h1>
+      <p className="mt-3 text-sm leading-6 text-ink/60">
         {isLogin
           ? "Log in to suggest typings, add evidence, and create profiles."
           : "Create an account to suggest typings and contribute to profiles."}
@@ -39,7 +40,7 @@ export function AuthForm({
             autoComplete="email"
             required
             placeholder="you@example.com"
-            className="min-h-11 rounded-md border border-white/10 bg-coal px-3 text-ink outline-none focus:border-brass"
+            className="field-control"
           />
         </label>
         <label className="grid gap-2 text-sm font-medium text-ink">
@@ -51,18 +52,25 @@ export function AuthForm({
             required
             minLength={6}
             placeholder="At least 6 characters"
-            className="min-h-11 rounded-md border border-white/10 bg-coal px-3 text-ink outline-none focus:border-brass"
+            className="field-control"
           />
         </label>
       </div>
       {state.message ? (
-        <p role="status" className={state.ok ? "mt-4 text-sm text-emerald-300" : "mt-4 text-sm text-wine"}>
+        <p
+          role="status"
+          className={
+            state.ok
+              ? "mt-4 rounded-md border border-emerald-300/25 bg-emerald-300/10 px-3 py-2 text-sm text-emerald-200"
+              : "mt-4 rounded-md border border-wine/35 bg-wine/10 px-3 py-2 text-sm text-red-200"
+          }
+        >
           {state.message}
         </p>
       ) : null}
       <button
         disabled={pending}
-        className="mt-6 inline-flex min-h-11 w-full items-center justify-center rounded-md bg-ink px-5 text-sm font-semibold text-coal transition hover:bg-brass disabled:opacity-60"
+        className="primary-action mt-6 w-full"
       >
         {pending ? "Working..." : isLogin ? "Log in" : "Sign up"}
       </button>

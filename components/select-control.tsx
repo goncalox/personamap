@@ -15,7 +15,7 @@ export function SelectControl({ label, helper, labelClassName, className, childr
       <span className="relative block">
         <select
           className={cn(
-            "min-h-11 w-full appearance-none rounded-md border border-white/10 bg-coal px-3 pr-10 text-sm text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] outline-none transition hover:border-white/25 focus:border-brass focus:ring-2 focus:ring-brass/20 disabled:cursor-not-allowed disabled:opacity-60",
+            "field-control appearance-none pr-10 disabled:cursor-not-allowed disabled:opacity-60",
             className,
           )}
           {...props}
